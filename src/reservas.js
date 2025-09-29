@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 // Rutas
-app.use("/api/v1/salones", v1ServiciosRutas);
+app.use("/api/v1/servicios", v1ServiciosRutas);
 
 // Cargar variables de entorno
 process.loadEnvFile();
