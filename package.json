@@ -1,0 +1,12 @@
+{
+  "name": "app-reservas",
+  "version": "1.0.0",
+  "description": "TP-Final-Programacion3-UNER",
+  "main": "reservas.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Grupo AV",
+  "license": "ISC"
+}
