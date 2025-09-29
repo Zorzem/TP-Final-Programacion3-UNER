@@ -2,10 +2,11 @@
   "name": "app-reservas",
   "version": "1.0.0",
   "description": "TP-Final-Programacion3-UNER",
-  "main": "reservas.js",
+  "main": "src/reservas.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "des": "node --watch src/reservas.js"
   },
   "author": "Grupo AV",
   "license": "ISC",
