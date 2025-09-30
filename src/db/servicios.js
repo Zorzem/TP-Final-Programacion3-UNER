@@ -8,6 +8,12 @@ export default class Servicios {
         return servicios;
     }
 
+    crear = async (descripcion, importe) => {
+        const sql = 'INSERT INTO servicios (descripcion, importe) VALUES (?,?)';
+        const [resultado] =await conexion.execute(sql, [descripcion, importe]);
+        return resultado.insertId;
+    }
+
 
 
 }

@@ -5,5 +5,6 @@ const serviciosController = new ServiciosController();
 const router = express.Router();
 
 router.get("/", serviciosController.buscarTodos);
+router.post("/",serviciosController.crear);
 
 export { router };

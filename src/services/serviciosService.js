@@ -10,5 +10,9 @@ export default class ServiciosService {
         return this.servicios.buscarTodos();
     }
 
+    crear =(descripcion, importe) => {
+        return this.servicios.crear(descripcion,importe);
+    }
+
     
 }
