@@ -6,4 +6,10 @@ export default class Servicios {
     const [servicios] = await conexion.execute(sql);
     return servicios;
   };
+
+  buscarPorId = async (id) => {
+    const sql = "SELECT * FROM servicios WHERE servicio_id = ? AND activo = 1";
+    const [servicio] = await conexion.execute(sql, [id]);
+    return servicio[0] || null;
+  };
 }

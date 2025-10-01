@@ -5,7 +5,7 @@
   "main": "src/reservas.js",
   "type": "module",
   "scripts": {
-    "des": "node --watch src/reservas.js"
+    "dev": "node --watch src/reservas.js"
   },
   "author": "Grupo AV",
   "license": "ISC",
