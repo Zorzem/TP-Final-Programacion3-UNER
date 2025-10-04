@@ -12,4 +12,7 @@ export default class ServiciosService {
   buscarPorId = async (id) => {
     return this.servicios.buscarPorId(id);
   };
+    editar = async (id, datos) => {
+    return this.servicios.editar(id, datos);
+  };
 }

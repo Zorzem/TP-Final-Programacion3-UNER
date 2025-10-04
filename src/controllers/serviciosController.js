@@ -40,4 +40,35 @@ export default class ServiciosController {
       });
     }
   };
+  
+  editar = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { descripcion, importe, activo } = req.body;
+
+      const actualizado = await this.serviciosService.editar(id, {
+        descripcion,
+        importe,
+        activo,
+      });
+
+      if (!actualizado) {
+        return res.status(404).json({
+          estado: false,
+          mensaje: "Servicio no encontrado",
+        });
+      }
+
+      res.json({
+        estado: true,
+        mensaje: "Servicio actualizado correctamente",
+      });
+    } catch (error) {
+      console.log(`Error en PUT /servicios/${req.params.id}`, error);
+      res.status(500).json({
+        estado: false,
+        mensaje: "Error interno del servidor",
+      });
+    }
+  };
 }

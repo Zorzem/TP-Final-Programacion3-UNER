@@ -6,5 +6,7 @@ const router = express.Router();
 
 router.get("/", serviciosController.buscarTodos);
 router.get("/:id", serviciosController.buscarPorId);
+router.put("/:id", serviciosController.editar);
+
 
 export { router };
