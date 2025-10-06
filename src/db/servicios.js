@@ -7,11 +7,18 @@ export default class Servicios {
     return servicios;
   };
 
+  crear = async (descripcion, importe) => {
+      const sql = 'INSERT INTO servicios (descripcion, importe) VALUES (?,?)';
+      const [resultado] =await conexion.execute(sql, [descripcion, importe]);
+      return resultado.insertId;
+  };
+
   buscarPorId = async (id) => {
     const sql = "SELECT * FROM servicios WHERE servicio_id = ? AND activo = 1";
     const [servicio] = await conexion.execute(sql, [id]);
     return servicio[0] || null;
   };
+
   editar = async (id, { descripcion, importe, activo }) => {
     const [servicioExistente] = await conexion.execute(
       "SELECT * FROM servicios WHERE servicio_id = ?",
@@ -30,4 +37,5 @@ export default class Servicios {
     }
     return true;
   };
+  
 }; 

@@ -9,10 +9,18 @@ export default class ServiciosService {
     return this.servicios.buscarTodos();
   };
 
-  buscarPorId = async (id) => {
+  crear =(descripcion, importe) => {
+     return this.servicios.crear(descripcion,importe);
+  };
+
+    buscarPorId = async (id) => {
     return this.servicios.buscarPorId(id);
   };
+  
     editar = async (id, datos) => {
     return this.servicios.editar(id, datos);
   };
+    
 }
+
+
