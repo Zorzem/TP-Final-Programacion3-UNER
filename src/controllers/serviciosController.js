@@ -64,7 +64,7 @@ export default class ServiciosController {
           mensaje: "Servicio actualizado correctamente",
         });
       } catch (error) {
-        console.log(Error en PUT /servicios/${req.params.id}, error);
+        console.log(`Error en PUT /servicios/${req.params.id}`, error);
         res.status(500).json({
           estado: false,
           mensaje: "Error interno del servidor",
