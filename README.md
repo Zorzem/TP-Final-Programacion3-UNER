@@ -13,3 +13,9 @@
 - **Jose Herrera (joseherreraa1)**
 - **Matias Godoy (Kbzgames)**
 - **Virginia Alejandra Ponce (CodeGinny)**
+
+## Uso básico
+`schema.sql` contiene el esquema de la BD
+`npm run dev` inicia el servidor
+`api/v1/servicios` lista todos los servicios
+`api/v1/servicios/4` lista el servicio con ID 4
