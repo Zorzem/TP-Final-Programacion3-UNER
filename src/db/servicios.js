@@ -28,9 +28,9 @@ export default class Servicios {
     if (servicioExistente.length === 0) {
       return false; // No existe el servicio
     };
-    // Actualizar los campos
-    const sql = `UPDATE servicios SET descripcion = ?, importe = ?, activo = ? WHERE servicio_id = ?`;
-    const [result] = await conexion.execute(sql, [descripcion, importe, activo, id]);
+ 
+    const sql = `UPDATE servicios SET descripcion = ?, importe = ? WHERE servicio_id = ?`;
+    const [result] = await conexion.execute(sql, [descripcion, importe, id]);
 
     if (result && typeof result.affectedRows !== 'undefined') {
       return result.affectedRows > 0;
@@ -38,10 +38,8 @@ export default class Servicios {
     return true;
   };
   
-  // ---> MÉTODO DE ELIMINACIÓN CORREGIDO Y DENTRO DE LA CLASE <---
-  eliminarServicio = async(id) => {
-      // Nota: Cambié 'id' por 'servicio_id' si es el nombre correcto de la columna.
-      // Si la BD usa 'id', volvé a cambiarlo.
+
+  eliminar = async(id) => {
       const sql = 'UPDATE servicios SET activo = 0 WHERE servicio_id = ?'; 
       const [resultado] = await conexion.execute(sql, [id]);
       return resultado;

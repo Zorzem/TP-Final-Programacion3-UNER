@@ -44,12 +44,18 @@ export default class ServiciosController {
   editar = async (req, res) => {
     try {
       const { id } = req.params;
-      const { descripcion, importe, activo } = req.body;
+      const { descripcion, importe } = req.body;
+
+      if(!descripcion ||!importe){
+        return res.status(400).json({
+          'estado': false,
+          'mensaje':'faltan datos obligatorios'
+        });
+      }
 
       const actualizado = await this.serviciosService.editar(id, {
         descripcion,
-        importe,
-        activo,
+        importe
       });
 
       if (!actualizado) {
@@ -98,7 +104,7 @@ export default class ServiciosController {
     }
   }
   
-  eliminarServicio = async (req, res) => {
+  eliminar = async (req, res) => {
       try {
           const { id } = req.params;
           
@@ -109,7 +115,7 @@ export default class ServiciosController {
               });
           }
 
-          const resultado = await this.serviciosService.eliminarServicio(id);
+          const resultado = await this.serviciosService.eliminar(id);
           if (resultado && resultado.affectedRows === 0) {
               return res.status(404).json({
                   'estado': false,

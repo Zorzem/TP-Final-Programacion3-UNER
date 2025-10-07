@@ -20,8 +20,8 @@ export default class ServiciosService {
     editar = async (id, datos) => {
     return this.servicios.editar(id, datos);
   };
-    eliminarServicio = (id) => {
-        return this.servicios.eliminarServicio(id);
+    eliminar = (id) => {
+        return this.servicios.eliminar(id);
     }
 
     
