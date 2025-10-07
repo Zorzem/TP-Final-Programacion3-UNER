@@ -5,12 +5,12 @@
   "main": "src/reservas.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "des": "node --watch src/reservas.js"
+    "dev": "node --watch src/reservas.js"
   },
   "author": "Grupo AV",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "handlebars": "^4.7.8",
     "mysql2": "^3.15.1",
