@@ -38,4 +38,12 @@ export default class Servicios {
     return true;
   };
   
-}; 
+  // ---> MÉTODO DE ELIMINACIÓN CORREGIDO Y DENTRO DE LA CLASE <---
+  eliminarServicio = async(id) => {
+      // Nota: Cambié 'id' por 'servicio_id' si es el nombre correcto de la columna.
+      // Si la BD usa 'id', volvé a cambiarlo.
+      const sql = 'UPDATE servicios SET activo = 0 WHERE servicio_id = ?'; 
+      const [resultado] = await conexion.execute(sql, [id]);
+      return resultado;
+  }
+}

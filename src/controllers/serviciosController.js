@@ -42,39 +42,37 @@ export default class ServiciosController {
   };
 
   editar = async (req, res) => {
-      try {
-        const { id } = req.params;
-        const { descripcion, importe, activo } = req.body;
+    try {
+      const { id } = req.params;
+      const { descripcion, importe, activo } = req.body;
 
-        const actualizado = await this.serviciosService.editar(id, {
-          descripcion,
-          importe,
-          activo,
-        });
+      const actualizado = await this.serviciosService.editar(id, {
+        descripcion,
+        importe,
+        activo,
+      });
 
-        if (!actualizado) {
-          return res.status(404).json({
-            estado: false,
-            mensaje: "Servicio no encontrado",
-          });
-        }
-
-        res.json({
-          estado: true,
-          mensaje: "Servicio actualizado correctamente",
-        });
-      } catch (error) {
-        console.log(`Error en PUT /servicios/${req.params.id}`, error);
-        res.status(500).json({
+      if (!actualizado) {
+        return res.status(404).json({
           estado: false,
-          mensaje: "Error interno del servidor",
+          mensaje: "Servicio no encontrado",
         });
       }
-    };
-  
+
+      res.json({
+        estado: true,
+        mensaje: "Servicio actualizado correctamente",
+      });
+    } catch (error) {
+      console.log(`Error en PUT /servicios/${req.params.id}`, error);
+      res.status(500).json({
+        estado: false,
+        mensaje: "Error interno del servidor",
+      });
+    }
+  };
 
   crear = async (req,res) => {
-
     try{
       const {descripcion,importe} =req.body;
       if(!descripcion ||!importe){
@@ -98,8 +96,38 @@ export default class ServiciosController {
         'mensaje':'error interno del servidor'
       });
     }
-
   }
   
-  
+  eliminarServicio = async (req, res) => {
+      try {
+          const { id } = req.params;
+          
+          if (!id) {
+              return res.status(400).json({
+                  'estado': false,
+                  'mensaje': 'ID del servicio es requerido'
+              });
+          }
+
+          const resultado = await this.serviciosService.eliminarServicio(id);
+          if (resultado && resultado.affectedRows === 0) {
+              return res.status(404).json({
+                  'estado': false,
+                  'mensaje': 'Servicio no encontrado'
+              });
+          }
+
+          res.json({
+              'estado': true,
+              'mensaje': 'Servicio eliminado correctamente'
+          });
+
+      } catch (error) {
+          console.log("Error en DELETE /servicios/:id", error);
+          res.status(500).json({
+              'estado': false,
+              'mensaje': 'Error interno del servidor'
+          });
+      }
+  }
 }

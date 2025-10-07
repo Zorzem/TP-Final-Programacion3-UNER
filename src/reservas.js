@@ -1,7 +1,7 @@
 import express from "express";
 import { router as v1ServiciosRutas } from "./v1/routes/serviciosRoutes.js";
 
-process.loadEnvFile(); // cargar variables de entorno
+process.loadEnvFile();
 
 const app = express();
 
