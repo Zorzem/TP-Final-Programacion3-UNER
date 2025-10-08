@@ -9,22 +9,18 @@ export default class ServiciosService {
     return this.servicios.buscarTodos();
   };
 
-  crear =(descripcion, importe) => {
-     return this.servicios.crear(descripcion,importe);
+  crear = (descripcion, importe) => {
+    return this.servicios.crear(descripcion, importe);
   };
 
-    buscarPorId = async (id) => {
+  buscarPorId = async (id) => {
     return this.servicios.buscarPorId(id);
   };
-  
-    editar = async (id, datos) => {
+
+  editar = async (id, datos) => {
     return this.servicios.editar(id, datos);
   };
-    eliminar = (id) => {
-        return this.servicios.eliminar(id);
-    }
-
-    
+  eliminar = (id) => {
+    return this.servicios.eliminar(id);
+  };
 }
-
-

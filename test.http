@@ -1,0 +1,37 @@
+# Revisar que el número de puerto coincida con el .env
+
+# OBTENER TODOS LOS SERVICIOS
+GET http://localhost:3000/api/v1/servicios
+
+###
+
+# OBTENER UN SERVICIO ESPECÍFICO POR ID
+GET http://localhost:3000/api/v1/servicios/3
+
+
+###
+
+# CREAR UN SERVICIO
+POST http://localhost:3000/api/v1/servicios
+Content-Type: application/json
+
+{
+  "descripcion": "Corte de pelo",
+  "importe": 5000
+}
+
+###
+
+# ACTUALIZAR UN SERVICIO
+PUT http://localhost:3000/api/v1/servicios/4
+Content-Type: application/json
+
+{
+  "descripcion": "Corte y barba",
+  "importe": 7500
+}
+
+
+###
+# ELIMINAR UN SERVICIO
+DELETE http://localhost:3000/api/v1/servicios/4

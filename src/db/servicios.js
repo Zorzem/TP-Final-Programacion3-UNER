@@ -8,9 +8,9 @@ export default class Servicios {
   };
 
   crear = async (descripcion, importe) => {
-      const sql = 'INSERT INTO servicios (descripcion, importe) VALUES (?,?)';
-      const [resultado] =await conexion.execute(sql, [descripcion, importe]);
-      return resultado.insertId;
+    const sql = "INSERT INTO servicios (descripcion, importe) VALUES (?,?)";
+    const [resultado] = await conexion.execute(sql, [descripcion, importe]);
+    return resultado.insertId;
   };
 
   buscarPorId = async (id) => {
@@ -20,28 +20,24 @@ export default class Servicios {
   };
 
   editar = async (id, { descripcion, importe, activo }) => {
-    const [servicioExistente] = await conexion.execute(
-      "SELECT * FROM servicios WHERE servicio_id = ?",
-      [id]
-    );
+    const [servicioExistente] = await conexion.execute("SELECT * FROM servicios WHERE servicio_id = ?", [id]);
 
     if (servicioExistente.length === 0) {
-      return false; // No existe el servicio
-    };
- 
+      return false; // el servicio no existe
+    }
+
     const sql = `UPDATE servicios SET descripcion = ?, importe = ? WHERE servicio_id = ?`;
     const [result] = await conexion.execute(sql, [descripcion, importe, id]);
 
-    if (result && typeof result.affectedRows !== 'undefined') {
+    if (result && typeof result.affectedRows !== "undefined") {
       return result.affectedRows > 0;
     }
     return true;
   };
-  
 
-  eliminar = async(id) => {
-      const sql = 'UPDATE servicios SET activo = 0 WHERE servicio_id = ?'; 
-      const [resultado] = await conexion.execute(sql, [id]);
-      return resultado;
-  }
+  eliminar = async (id) => {
+    const sql = "UPDATE servicios SET activo = 0 WHERE servicio_id = ?";
+    const [resultado] = await conexion.execute(sql, [id]);
+    return resultado;
+  };
 }
