@@ -16,9 +16,9 @@ Segundo cuatrimestre 2025
 
 ## Tecnologías usadas
 
-- **Node.js** - Entorno de ejecución
-- **Express.js** - Framework web
-- **MySQL** - Base de datos relacional
+- **Node.js**
+- **Express.js**
+- **MySQL**
 
 ## Estructura del proyecto
 
@@ -37,7 +37,7 @@ proyecto-reservas/
 ├── reservas.js                   # Punto de entrada de la aplicación
 ├── schema.sql                    # Esquema de la base de datos
 ├── .env                          # Variables de entorno
-└── package.json
+└── test.http                     # Archivo de testing para realizar pruebas HTTP rápidas
 ```
 
 ## Instalación
@@ -60,8 +60,8 @@ proyecto-reservas/
    ```env
    PUERTO=3000
    DB_HOST=localhost
-   DB_USER=tu_usuario
-   DB_PASSWORD=tu_contraseña
+   DB_USER=usuario
+   DB_PASSWORD=contraseña
    DB_NAME=nombre_bd
    ```
 
