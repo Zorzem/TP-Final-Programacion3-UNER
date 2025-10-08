@@ -62,7 +62,7 @@ proyecto-reservas/
    DB_HOST=localhost
    DB_USER=usuario
    DB_PASSWORD=contraseña
-   DB_NAME=nombre_bd
+   DB_DATABASE=nombre_bd
    ```
 
 4. **Levantar el servidor**
