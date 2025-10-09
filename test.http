@@ -1,12 +1,17 @@
 # Revisar que el número de puerto coincida con el .env
 
-# OBTENER TODOS LOS SERVICIOS
+# OBTENER TODOS LOS SERVICIOS (omitir los inactivos)
 GET http://localhost:3000/api/v1/servicios
+
+###
+# OBTENER TODOS LOS SERVICIOS (incluyendo los inactivos)
+GET http://localhost:3000/api/v1/servicios?incluirInactivos=true
+
 
 ###
 
 # OBTENER UN SERVICIO ESPECÍFICO POR ID
-GET http://localhost:3000/api/v1/servicios/3
+GET http://localhost:3000/api/v1/servicios/1
 
 
 ###
@@ -16,14 +21,14 @@ POST http://localhost:3000/api/v1/servicios
 Content-Type: application/json
 
 {
-  "descripcion": "Corte de pelo",
-  "importe": 5000
+  "descripcion": "Peluca",
+  "importe": 15000
 }
 
 ###
 
 # ACTUALIZAR UN SERVICIO
-PUT http://localhost:3000/api/v1/servicios/4
+PUT http://localhost:3000/api/v1/servicios/
 Content-Type: application/json
 
 {

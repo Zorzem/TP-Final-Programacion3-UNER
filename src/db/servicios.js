@@ -1,8 +1,12 @@
 import { conexion } from "./conexion.js";
 
 export default class Servicios {
-  buscarTodos = async () => {
-    const sql = "SELECT * FROM servicios where activo = 1";
+  buscarTodos = async (incluirInactivos = false) => {
+    let sql = "SELECT * FROM servicios";
+    if (!incluirInactivos) {
+      sql += " WHERE activo = 1";
+    }
+
     const [servicios] = await conexion.execute(sql);
     return servicios;
   };

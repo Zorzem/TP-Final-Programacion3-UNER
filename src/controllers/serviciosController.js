@@ -7,7 +7,10 @@ export default class ServiciosController {
 
   buscarTodos = async (req, res) => {
     try {
-      const servicios = await this.serviciosService.buscarTodos();
+      const { incluirInactivos } = req.query;
+      const incluir = incluirInactivos === "true";
+
+      const servicios = await this.serviciosService.buscarTodos(incluir);
 
       res.json({ estado: true, datos: servicios });
     } catch (error) {
