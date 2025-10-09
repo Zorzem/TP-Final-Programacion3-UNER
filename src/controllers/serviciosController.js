@@ -30,7 +30,7 @@ export default class ServiciosController {
       if (!servicio) {
         return res.status(404).json({
           estado: false,
-          mensaje: "Servicio no encontrado",
+          mensaje: `Servicio con ID ${id} no encontrado`,
         });
       }
 
@@ -43,6 +43,7 @@ export default class ServiciosController {
       });
     }
   };
+
   editar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -70,7 +71,7 @@ export default class ServiciosController {
 
       res.json({
         estado: true,
-        mensaje: "Servicio actualizado correctamente",
+        mensaje: `Servicio de ID ${id} actualizado correctamente`,
       });
     } catch (error) {
       console.log(`Error en PUT /servicios/${req.params.id}`, error);
@@ -87,7 +88,7 @@ export default class ServiciosController {
       if (!descripcion || !importe) {
         return res.status(400).json({
           estado: false,
-          mensaje: "Faltan datos obligatorios, descripción e importe",
+          mensaje: "Faltan datos obligatorios: descripción e importe",
         });
       }
       const nuevoServicioId = await this.serviciosService.crear(descripcion, importe);
@@ -120,13 +121,13 @@ export default class ServiciosController {
       if (resultado && resultado.affectedRows === 0) {
         return res.status(404).json({
           estado: false,
-          mensaje: "Servicio no encontrado",
+          mensaje: `Servicio de ID ${id} no encontrado`,
         });
       }
 
       res.json({
         estado: true,
-        mensaje: "Servicio eliminado correctamente",
+        mensaje: `Servicio de ID ${id} eliminado correctamente`,
       });
     } catch (error) {
       console.log("Error en DELETE /servicios/:id", error);

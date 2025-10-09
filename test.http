@@ -12,7 +12,7 @@ GET http://localhost:3000/api/v1/servicios?incluirInactivos=true
 ###
 
 # OBTENER UN SERVICIO ESPECÍFICO POR ID
-GET http://localhost:3000/api/v1/servicios/1
+GET http://localhost:3000/api/v1/servicios/18
 
 
 ###
@@ -29,14 +29,15 @@ Content-Type: application/json
 ###
 
 # ACTUALIZAR UN SERVICIO
-PUT http://localhost:3000/api/v1/servicios/1
+PUT http://localhost:3000/api/v1/servicios/15
 Content-Type: application/json
 
 {
-  "activo": 1
+  "descripcion": "Peluca",
+  "importe": 15000
 }
 
 
 ###
 # ELIMINAR UN SERVICIO
-DELETE http://localhost:3000/api/v1/servicios/4
+DELETE http://localhost:3000/api/v1/servicios/189
