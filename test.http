@@ -1,6 +1,7 @@
 # Revisar que el número de puerto coincida con el .env
 # Revisar que no haya trailing commas en el JSON :p
 
+
 # OBTENER TODOS LOS SERVICIOS (omitiendo los inactivos)
 GET http://localhost:3000/api/v1/servicios
 
@@ -12,7 +13,7 @@ GET http://localhost:3000/api/v1/servicios?incluirInactivos=true
 ###
 
 # OBTENER UN SERVICIO ESPECÍFICO POR ID
-GET http://localhost:3000/api/v1/servicios/18
+GET http://localhost:3000/api/v1/servicios/12
 
 
 ###
@@ -29,7 +30,7 @@ Content-Type: application/json
 ###
 
 # ACTUALIZAR UN SERVICIO
-PUT http://localhost:3000/api/v1/servicios/15
+PUT http://localhost:3000/api/v1/servicios/12
 Content-Type: application/json
 
 {
@@ -40,4 +41,4 @@ Content-Type: application/json
 
 ###
 # ELIMINAR UN SERVICIO
-DELETE http://localhost:3000/api/v1/servicios/189
+DELETE http://localhost:3000/api/v1/servicios/1

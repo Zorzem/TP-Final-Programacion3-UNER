@@ -1,3 +1,4 @@
+import { successResponse, errorResponse, notFoundResponse } from "../utils/apiResponse.js";
 import ServiciosService from "../services/serviciosService.js";
 
 export default class ServiciosController {
@@ -5,6 +6,7 @@ export default class ServiciosController {
     this.serviciosService = new ServiciosService();
   }
 
+  /* ————————————————————————————————— BUSCAR SERVICIOS ————————————————————————————————— */
   buscarTodos = async (req, res) => {
     try {
       const { incluirInactivos } = req.query;
@@ -12,48 +14,38 @@ export default class ServiciosController {
 
       const servicios = await this.serviciosService.buscarTodos(incluir);
 
-      res.json({ estado: true, datos: servicios });
+      return successResponse(res, servicios, "Servicios encontrados");
     } catch (error) {
       console.log("Error en GET /servicios", error);
-      res.status(500).json({
-        estado: false,
-        mensaje: `Error interno del servidor`,
-      });
+      return errorResponse(res);
     }
   };
 
+  /* ——————————————————————————————————— BUSCAR POR ID —————————————————————————————————— */
   buscarPorId = async (req, res) => {
     try {
       const { id } = req.params;
       const servicio = await this.serviciosService.buscarPorId(id);
 
       if (!servicio) {
-        return res.status(404).json({
-          estado: false,
-          mensaje: `Servicio con ID ${id} no encontrado`,
-        });
+        return notFoundResponse(res, `Servicio con ID ${id} no encontrado`);
       }
 
-      res.json({ estado: true, datos: servicio });
+      return successResponse(res, servicio, "Servicio encontrado");
     } catch (error) {
       console.log(`Error en GET /servicios/${req.params.id}`, error);
-      res.status(500).json({
-        estado: false,
-        mensaje: "Error interno del servidor",
-      });
+      return errorResponse(res);
     }
   };
 
+  /* ———————————————————————————————— EDITAR UN SERVICIO ———————————————————————————————— */
   editar = async (req, res) => {
     try {
       const { id } = req.params;
       const { descripcion, importe, activo } = req.body;
 
       if (descripcion === undefined && importe === undefined && activo === undefined) {
-        return res.status(400).json({
-          estado: false,
-          mensaje: "Debe proporcionar al menos un campo para actualizar",
-        });
+        return errorResponse(res, "Debe proporcionar al menos un campo para actualizar", 400);
       }
 
       const actualizado = await this.serviciosService.editar(id, {
@@ -63,78 +55,52 @@ export default class ServiciosController {
       });
 
       if (!actualizado) {
-        return res.status(404).json({
-          estado: false,
-          mensaje: "Servicio no encontrado",
-        });
+        return notFoundResponse(res, `Servicio con ID ${id} no encontrado`);
       }
 
-      res.json({
-        estado: true,
-        mensaje: `Servicio de ID ${id} actualizado correctamente`,
-      });
+      return successResponse(res, null, `Servicio con ID ${id} actualizado correctamente`);
     } catch (error) {
       console.log(`Error en PUT /servicios/${req.params.id}`, error);
-      res.status(500).json({
-        estado: false,
-        mensaje: "Error interno del servidor",
-      });
+      return errorResponse(res);
     }
   };
 
+  /* ————————————————————————————————— CREAR UN SERVICIO ———————————————————————————————— */
   crear = async (req, res) => {
     try {
       const { descripcion, importe } = req.body;
+
       if (!descripcion || !importe) {
-        return res.status(400).json({
-          estado: false,
-          mensaje: "Faltan datos obligatorios: descripción e importe",
-        });
+        return errorResponse(res, "Faltan datos obligatorios: descripción e importe", 400);
       }
+
       const nuevoServicioId = await this.serviciosService.crear(descripcion, importe);
-      res.status(201).json({
-        estado: true,
-        mensaje: "Servicio creado con éxito",
-        id: nuevoServicioId,
-      });
+
+      return successResponse(res, { id: nuevoServicioId }, "Servicio creado con éxito", 201);
     } catch (error) {
       console.log("Error en POST /servicios", error);
-      res.status(500).json({
-        estado: false,
-        mensaje: "Error interno del servidor",
-      });
+      return errorResponse(res);
     }
   };
 
+  /* ——————————————————————————————— ELIMINAR UN SERVICIO ——————————————————————————————— */
   eliminar = async (req, res) => {
     try {
       const { id } = req.params;
 
       if (!id) {
-        return res.status(400).json({
-          estado: false,
-          mensaje: "ID del servicio es requerido",
-        });
+        return errorResponse(res, "ID del servicio es requerido", 400);
       }
 
       const resultado = await this.serviciosService.eliminar(id);
       if (resultado && resultado.affectedRows === 0) {
-        return res.status(404).json({
-          estado: false,
-          mensaje: `Servicio de ID ${id} no encontrado`,
-        });
+        return notFoundResponse(res, `Servicio con ID ${id} no encontrado`);
       }
 
-      res.json({
-        estado: true,
-        mensaje: `Servicio de ID ${id} eliminado correctamente`,
-      });
+      return successResponse(res, null, `Servicio con ID ${id} eliminado correctamente`);
     } catch (error) {
       console.log("Error en DELETE /servicios/:id", error);
-      res.status(500).json({
-        estado: false,
-        mensaje: "Error interno del servidor",
-      });
+      return errorResponse(res);
     }
   };
 }

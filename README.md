@@ -80,7 +80,7 @@ GET http://localhost:3000/api/v1/servicios
 
 Obtener todos los servicios (incluyendo inactivos):
 
-```bash
+```http
 GET http://localhost:3000/api/v1/servicios?incluirInactivos=true
 ```
 
