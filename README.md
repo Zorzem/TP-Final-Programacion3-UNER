@@ -78,6 +78,12 @@ Obtener todos los servicios:
 GET http://localhost:3000/api/v1/servicios
 ```
 
+Obtener todos los servicios (incluyendo inactivos):
+
+```bash
+GET http://localhost:3000/api/v1/servicios?incluirInactivos=true
+```
+
 Obtener servicio por ID:
 
 ```bash
