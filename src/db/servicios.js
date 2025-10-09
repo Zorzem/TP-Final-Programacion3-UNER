@@ -18,7 +18,7 @@ export default class Servicios {
   };
 
   buscarPorId = async (id) => {
-    const sql = "SELECT * FROM servicios WHERE servicio_id = ? AND activo = 1";
+    const sql = "SELECT * FROM servicios WHERE servicio_id = ?";
     const [servicio] = await conexion.execute(sql, [id]);
     return servicio[0] || null;
   };
@@ -27,16 +27,35 @@ export default class Servicios {
     const [servicioExistente] = await conexion.execute("SELECT * FROM servicios WHERE servicio_id = ?", [id]);
 
     if (servicioExistente.length === 0) {
-      return false; // el servicio no existe
+      return false; // servicio no existe
     }
 
-    const sql = `UPDATE servicios SET descripcion = ?, importe = ? WHERE servicio_id = ?`;
-    const [result] = await conexion.execute(sql, [descripcion, importe, id]);
+    // construcción dinámica del SQL
+    const campos = [];
+    const valores = [];
 
-    if (result && typeof result.affectedRows !== "undefined") {
-      return result.affectedRows > 0;
+    if (descripcion !== undefined) {
+      campos.push("descripcion = ?");
+      valores.push(descripcion);
     }
-    return true;
+    if (importe !== undefined) {
+      campos.push("importe = ?");
+      valores.push(importe);
+    }
+    if (activo !== undefined) {
+      campos.push("activo = ?");
+      valores.push(activo);
+    }
+
+    if (campos.length === 0) {
+      return true; // nada que actualizar
+    }
+
+    const sql = `UPDATE servicios SET ${campos.join(", ")} WHERE servicio_id = ?`;
+    valores.push(id);
+
+    const [result] = await conexion.execute(sql, valores);
+    return result.affectedRows > 0;
   };
 
   eliminar = async (id) => {

@@ -43,22 +43,22 @@ export default class ServiciosController {
       });
     }
   };
-
   editar = async (req, res) => {
     try {
       const { id } = req.params;
-      const { descripcion, importe } = req.body;
+      const { descripcion, importe, activo } = req.body;
 
-      if (!descripcion || !importe) {
+      if (descripcion === undefined && importe === undefined && activo === undefined) {
         return res.status(400).json({
           estado: false,
-          mensaje: "Faltan datos obligatorios",
+          mensaje: "Debe proporcionar al menos un campo para actualizar",
         });
       }
 
       const actualizado = await this.serviciosService.editar(id, {
         descripcion,
         importe,
+        activo,
       });
 
       if (!actualizado) {

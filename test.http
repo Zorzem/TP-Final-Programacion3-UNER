@@ -1,6 +1,7 @@
 # Revisar que el número de puerto coincida con el .env
+# Revisar que no haya trailing commas en el JSON :p
 
-# OBTENER TODOS LOS SERVICIOS (omitir los inactivos)
+# OBTENER TODOS LOS SERVICIOS (omitiendo los inactivos)
 GET http://localhost:3000/api/v1/servicios
 
 ###
@@ -28,12 +29,11 @@ Content-Type: application/json
 ###
 
 # ACTUALIZAR UN SERVICIO
-PUT http://localhost:3000/api/v1/servicios/
+PUT http://localhost:3000/api/v1/servicios/1
 Content-Type: application/json
 
 {
-  "descripcion": "Corte y barba",
-  "importe": 7500
+  "activo": 1
 }
 
 
