@@ -23,7 +23,7 @@ POST http://localhost:3000/api/v1/servicios
 Content-Type: application/json
 
 {
-  "descripcion": "Peluca",
+  "descripcion": "Test",
   "importe": 15000
 }
 

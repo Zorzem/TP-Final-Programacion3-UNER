@@ -23,9 +23,9 @@ POST http://localhost:3000/api/v1/usuarios
 Content-Type: application/json
 
 {
-  "nombre": "Jaime",
-  "apellido": "Pérez",
-  "nombre_usuario": "jaime123",
+  "nombre": "Jose",
+  "apellido": "Perez",
+  "nombre_usuario": "jp123",
   "contrasenia": "test",
   "tipo_usuario": 2
 }
