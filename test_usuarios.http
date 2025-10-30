@@ -1,0 +1,47 @@
+# Revisar que el número de puerto coincida con el .env
+# Revisar que no haya trailing commas en el JSON :p
+
+
+# OBTENER TODOS LOS USUARIOS (omitiendo los inactivos)
+GET http://localhost:3000/api/v1/usuarios
+
+###
+
+# OBTENER TODOS LOS USUARIOS (incluyendo los inactivos)
+GET http://localhost:3000/api/v1/usuarios?incluirInactivos=true
+
+###
+
+# OBTENER UN USUARIO ESPECÍFICO POR ID
+GET http://localhost:3000/api/v1/usuarios/12
+
+
+###
+
+# CREAR UN USUARIO
+POST http://localhost:3000/api/v1/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Jose",
+  "apellido": "Perez",
+  "nombre_usuario": "jp123",
+  "contrasenia": "test",
+  "tipo_usuario": 2
+}
+
+
+###
+
+# ACTUALIZAR UN USUARIO
+PUT http://localhost:3000/api/v1/usuarios/1
+Content-Type: application/json
+
+{
+  "orden": 21
+}
+
+
+###
+# ELIMINAR UN USUARIO
+DELETE http://localhost:3000/api/v1/usuarios/1

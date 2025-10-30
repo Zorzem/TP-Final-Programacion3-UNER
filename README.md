@@ -31,6 +31,7 @@ proyecto-reservas/
 ├── db/
 │   ├── conexion.js               # Configuración de BD
 │   └── servicios.js              # Capa de acceso a datos
+├── utils/apiResponse.js          # Para manejar respuestas de la API
 ├── v1/
 │   └── routes/
 │       └── serviciosRoutes.js    # Definición de rutas API v1
@@ -49,11 +50,11 @@ proyecto-reservas/
 
 ### Pasos
 
-1. **Clonar el repositorio e instalar dependencias (`npm install`)**
+1. **Clonar el repo e instalar dependencias (`npm install`)**
 
 2. **Configurar la base de datos**
    ```bash
-   mysql -u tu_usuario -p tu_base_de_datos < schema.sql
+   mysql -u usuario -p contraseña < schema.sql
    ```
 
 3. **Crear un archivo `.env` en la raíz del proyecto**
@@ -76,6 +77,12 @@ Obtener todos los servicios:
 
 ```bash
 GET http://localhost:3000/api/v1/servicios
+```
+
+Obtener todos los servicios (incluyendo inactivos):
+
+```bash
+GET http://localhost:3000/api/v1/servicios?incluirInactivos=true
 ```
 
 Obtener servicio por ID:

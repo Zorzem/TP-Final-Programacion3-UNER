@@ -1,0 +1,47 @@
+# Revisar que el número de puerto coincida con el .env
+# Revisar que no haya trailing commas en el JSON :p
+
+
+# OBTENER TODAS LAS RESERVAS (omitiendo las inactivas)
+GET http://localhost:3000/api/v1/reservas
+
+###
+
+# OBTENER TODAS LAS RESERVAS (incluyendo las inactivas)
+GET http://localhost:3000/api/v1/reservas?incluirInactivos=true
+
+###
+
+# OBTENER UNA RESERVA ESPECÍFICA POR ID
+GET http://localhost:3000/api/v1/reservas/1
+
+
+###
+
+# CREAR UNA RESERVA
+POST http://localhost:3000/api/v1/reservas
+Content-Type: application/json
+# MySQL espera el formato YYYY-MM-DD
+# Los ID del salon, usuario y turno deben existir previamente en la BD
+
+{
+  "fecha_reserva": "2025-12-11",
+  "salon_id": 2,
+  "usuario_id": 1,
+  "turno_id": 1
+}
+
+###
+
+# ACTUALIZAR UNA RESERVA
+PUT http://localhost:3000/api/v1/reservas/14
+Content-Type: application/json
+
+{
+  "tematica": "Autos"
+}
+
+
+###
+# ELIMINAR UNA RESERVA
+DELETE http://localhost:3000/api/v1/reservas/1

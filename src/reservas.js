@@ -1,5 +1,10 @@
+import { errorResponse } from "./utils/apiResponse.js";
 import express from "express";
-import { router as v1ServiciosRutas } from "./v1/routes/serviciosRoutes.js";
+import turnosRoutes from "./v1/routes/turnosRoutes.js";
+import salonesRoutes from "./v1/routes/salonesRoutes.js";
+import reservasRoutes from "./v1/routes/reservasRoutes.js";
+import serviciosRoutes from "./v1/routes/serviciosRoutes.js";
+import usuariosRoutes from "./v1/routes/usuariosRoutes.js";
 
 process.loadEnvFile();
 
@@ -7,8 +12,17 @@ const app = express();
 
 app.use(express.json());
 
-// Rutas
-app.use("/api/v1/servicios", v1ServiciosRutas);
+// rutas
+app.use("/api/v1/servicios", serviciosRoutes);
+app.use("/api/v1/salones", salonesRoutes);
+app.use("/api/v1/turnos", turnosRoutes);
+app.use("/api/v1/reservas", reservasRoutes);
+app.use("/api/v1/usuarios", usuariosRoutes);
+
+// para manejar rutas inválidas
+app.use((req, res, next) => {
+  return errorResponse(res, `Ruta ${req.originalUrl} no encontrada`, 404);
+});
 
 app.listen(process.env.PUERTO, () => {
   console.log(`Servidor arriba en el puerto ${process.env.PUERTO}`);

@@ -5,8 +5,8 @@ export default class ServiciosService {
     this.servicios = new Servicios();
   }
 
-  buscarTodos = () => {
-    return this.servicios.buscarTodos();
+  buscarTodos = (incluirInactivos = false) => {
+    return this.servicios.buscarTodos(incluirInactivos);
   };
 
   crear = (descripcion, importe) => {
@@ -20,6 +20,7 @@ export default class ServiciosService {
   editar = async (id, datos) => {
     return this.servicios.editar(id, datos);
   };
+
   eliminar = (id) => {
     return this.servicios.eliminar(id);
   };

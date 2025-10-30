@@ -1,0 +1,44 @@
+# Revisar que el número de puerto coincida con el .env
+# Revisar que no haya trailing commas en el JSON :p
+
+
+# OBTENER TODOS LOS TURNOS (omitiendo los inactivos)
+GET http://localhost:3000/api/v1/turnos
+
+###
+
+# OBTENER TODOS LOS TURNOS (incluyendo los inactivos)
+GET http://localhost:3000/api/v1/turnos?incluirInactivos=true
+
+###
+
+# OBTENER UN TURNO ESPECÍFICO POR ID
+GET http://localhost:3000/api/v1/turnos/1
+
+
+###
+
+# CREAR UN TURNO
+POST http://localhost:3000/api/v1/turnos
+Content-Type: application/json
+
+{
+  "orden": 40,
+  "hora_desde": "11:45",
+  "hora_hasta": "20:15"
+}
+
+###
+
+# ACTUALIZAR UN TURNO
+PUT http://localhost:3000/api/v1/turnos/1
+Content-Type: application/json
+
+{
+  "orden": 21
+}
+
+
+###
+# ELIMINAR UN TURNO
+DELETE http://localhost:3000/api/v1/turnos/1
