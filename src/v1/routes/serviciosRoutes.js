@@ -10,4 +10,4 @@ router.post("/", serviciosController.crear);
 router.put("/:id", serviciosController.editar);
 router.delete("/:id", serviciosController.eliminar);
 
-export { router };
+export default router;

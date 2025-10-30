@@ -6,7 +6,6 @@ export default class ServiciosController {
     this.serviciosService = new ServiciosService();
   }
 
-  /* ————————————————————————————————— BUSCAR SERVICIOS ————————————————————————————————— */
   buscarTodos = async (req, res) => {
     try {
       const { incluirInactivos } = req.query;
@@ -21,7 +20,6 @@ export default class ServiciosController {
     }
   };
 
-  /* ——————————————————————————————————— BUSCAR POR ID —————————————————————————————————— */
   buscarPorId = async (req, res) => {
     try {
       const { id } = req.params;
@@ -38,14 +36,27 @@ export default class ServiciosController {
     }
   };
 
-  /* ———————————————————————————————— EDITAR UN SERVICIO ———————————————————————————————— */
   editar = async (req, res) => {
     try {
       const { id } = req.params;
+      const camposPermitidos = ["descripcion", "importe", "activo"];
+      const camposRecibidos = Object.keys(req.body);
+
+      // validar campos no permitidos
+      const camposInvalidos = camposRecibidos.filter((campo) => !camposPermitidos.includes(campo));
+      if (camposInvalidos.length > 0) {
+        return errorResponse(res, `Campos incorrectos: ${camposInvalidos.join(", ")}`, 400);
+      }
+
       const { descripcion, importe, activo } = req.body;
 
       if (descripcion === undefined && importe === undefined && activo === undefined) {
-        return errorResponse(res, "Debe proporcionar al menos un campo para actualizar", 400);
+        return errorResponse(res, "Debés proporcionar al menos un campo para actualizar", 400);
+      }
+
+      // validar que el importe sea un num
+      if (importe !== undefined && (isNaN(importe) || typeof Number(importe) !== "number")) {
+        return errorResponse(res, "El campo 'importe' debe ser numérico", 400);
       }
 
       const actualizado = await this.serviciosService.editar(id, {
@@ -65,7 +76,6 @@ export default class ServiciosController {
     }
   };
 
-  /* ————————————————————————————————— CREAR UN SERVICIO ———————————————————————————————— */
   crear = async (req, res) => {
     try {
       const { descripcion, importe } = req.body;
@@ -83,7 +93,6 @@ export default class ServiciosController {
     }
   };
 
-  /* ——————————————————————————————— ELIMINAR UN SERVICIO ——————————————————————————————— */
   eliminar = async (req, res) => {
     try {
       const { id } = req.params;

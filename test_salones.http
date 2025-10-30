@@ -1,0 +1,45 @@
+# Revisar que el número de puerto coincida con el .env
+# Revisar que no haya trailing commas en el JSON :p
+
+
+# OBTENER TODOS LOS SALONES (omitiendo los inactivos)
+GET http://localhost:3000/api/v1/salones
+
+###
+
+# OBTENER TODOS LOS SALONES (incluyendo los inactivos)
+GET http://localhost:3000/api/v1/salones?incluirInactivos=true
+
+###
+
+# OBTENER UN SALÓN ESPECÍFICO POR ID
+GET http://localhost:3000/api/v1/salones/2
+
+
+###
+
+# CREAR UN SALON
+POST http://localhost:3000/api/v1/salones
+Content-Type: application/json
+
+{
+  "titulo": "Salón grande",
+  "direccion": "Mitre",
+  "capacidad": 100,
+  "importe": 22000
+}
+
+###
+
+# ACTUALIZAR UN SALON
+PUT http://localhost:3000/api/v1/salones/1
+Content-Type: application/json
+
+{
+  "importe": "Benito 2090"
+}
+
+
+###
+# ELIMINAR UN SALON
+DELETE http://localhost:3000/api/v1/salones/1
