@@ -5,6 +5,7 @@ import salonesRoutes from "./v1/routes/salonesRoutes.js";
 import reservasRoutes from "./v1/routes/reservasRoutes.js";
 import serviciosRoutes from "./v1/routes/serviciosRoutes.js";
 import usuariosRoutes from "./v1/routes/usuariosRoutes.js";
+import encuestasRoutes from "./v1/routes/encuestasRoutes.js";
 
 process.loadEnvFile();
 
@@ -18,6 +19,8 @@ app.use("/api/v1/salones", salonesRoutes);
 app.use("/api/v1/turnos", turnosRoutes);
 app.use("/api/v1/reservas", reservasRoutes);
 app.use("/api/v1/usuarios", usuariosRoutes);
+app.use("/api/v1/encuestas", encuestasRoutes);
+
 
 // para manejar rutas inválidas
 app.use((req, res, next) => {
