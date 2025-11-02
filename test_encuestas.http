@@ -1,0 +1,64 @@
+# Revisar que el número de puerto coincida con el .env
+# Revisar que no haya trailing commas en el JSON :p
+
+
+# OBTENER TODAS LAS ENCUESTAS (solo activas)
+GET http://localhost:3000/api/v1/encuestas
+
+###
+
+# OBTENER TODAS LAS ENCUESTAS (incluyendo las inactivas)
+GET http://localhost:3000/api/v1/encuestas?incluirInactivos=true
+
+###
+
+# OBTENER UNA ENCUESTA POR ID
+GET http://localhost:3000/api/v1/encuestas/1
+
+###
+
+# OBTENER ENCUESTAS DE UN USUARIO (solo activas)
+GET http://localhost:3000/api/v1/encuestas/usuario/3
+
+###
+
+# OBTENER ENCUESTAS DE UN USUARIO (incluyendo inactivas)
+GET http://localhost:3000/api/v1/encuestas/usuario/3?incluirInactivos=true
+
+###
+
+# OBTENER ENCUESTAS DE UN SALÓN (solo activas)
+GET http://localhost:3000/api/v1/encuestas/salon/2
+
+###
+
+# OBTENER ENCUESTAS DE UN SALÓN (incluyendo inactivas)
+GET http://localhost:3000/api/v1/encuestas/salon/2?incluirInactivos=true
+
+###
+
+# CREAR UNA ENCUESTA
+POST http://localhost:3000/api/v1/encuestas
+Content-Type: application/json
+
+{
+  "reserva_id": 5,
+  "puntaje": 4,
+  "comentario": "Muy buena atención y ambiente."
+}
+
+###
+
+# EDITAR UNA ENCUESTA
+PUT http://localhost:3000/api/v1/encuestas/1
+Content-Type: application/json
+
+{
+  "puntaje": 5,
+  "comentario": "Excelente servicio, volveré seguro."
+}
+
+###
+
+# ELIMINAR UNA ENCUESTA
+DELETE http://localhost:3000/api/v1/encuestas/1
