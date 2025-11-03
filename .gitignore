@@ -88,6 +88,12 @@ dist
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
 
+#Uploads/
+uploads/
+uploads/cumpleanieros/
+src/db/*.sqlite
+src/db/*.db
+
 # vuepress build output
 .vuepress/dist
 
