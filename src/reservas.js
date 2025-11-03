@@ -50,7 +50,7 @@ morgan.token('fecha-argentina', () => {
   return `${valores.day}/${valores.month}/${valores.year} ${valores.hour}:${valores.minute}:${valores.second}`;
 });
 
-// Formato personalizado de log
+// Formato personalizado para log
 const formatoPersonalizado = ':fecha-argentina | :method | :url | :status | :response-time ms | :res[content-length]';
 
 

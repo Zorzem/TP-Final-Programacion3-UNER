@@ -1,4 +1,7 @@
 import { conexion } from "./conexion.js";
+import crypto from 'crypto';
+
+
 
 export default class Usuarios {
 
@@ -32,18 +35,21 @@ export default class Usuarios {
     return rows[0] ?? null;
   }; */
 
-  crear = async ({ nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto }) => {
-    // forzar null si no se envia nada, sino da error xd
-    celular = celular ?? null;
-    foto = foto ?? null;
+crear = async ({ nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto }) => {
+  // forzar null si no se envia nada
+  celular = celular ?? null;
+  foto = foto ?? null;
 
-    const [result] = await conexion.execute(
-      `INSERT INTO usuarios (nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, creado, activo)
-       VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 1)`,
-      [nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto]
-    );
-    return result.insertId;
-  };
+  // Hashear la contraseña con SHA-256
+  const hashContrasenia = crypto.createHash('sha256').update(contrasenia).digest('hex');
+
+  const [result] = await conexion.execute(
+    `INSERT INTO usuarios (nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, creado, activo)
+     VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 1)`,
+    [nombre, apellido, nombre_usuario, hashContrasenia, tipo_usuario, celular, foto]
+  );
+  return result.insertId;
+};
 
   editar = async (id, datos) => {
     // null para campos opcionales si vienen como undefined
