@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reporte de Reservas</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 20px; }
+      h1 { color: #03912e; }
+      table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      th { background-color: #03912e; color: white; }
+      tr:nth-child(even) { background-color: #f2f2f2; }
+      .header { margin-bottom: 20px; }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Reporte de Reservas</h1>
+      <p><strong>Periodo:</strong> {{fechaInicio}} - {{fechaFin}}</p>
+      <p><strong>Tipo:</strong> {{tipo}}</p>
+    </div>
+    {{#if datos}}
+      {{#if (eq tipo "stats")}}
+        <table>
+          <tr>
+            <th>Total Reservas</th>
+            <th>Total Ingresos</th>
+            <th>Promedio Ingresos</th>
+            <th>Primera Reserva</th>
+            <th>Última Reserva</th>
+          </tr>
+          {{#each datos}}
+          <tr>
+            <td>{{total_reservas}}</td>
+            <td>${{total_ingresos}}</td>
+            <td>${{promedio_ingresos}}</td>
+            <td>{{primera_reserva}}</td>
+            <td>{{ultima_reserva}}</td>
+          </tr>
+          {{/each}}
+        </table>
+      {{else if (eq tipo "por_salon")}}
+        <table>
+          <tr>
+            <th>Salón ID</th>
+            <th>Nombre Salón</th>
+            <th>Cantidad Reservas</th>
+            <th>Total Ingresos</th>
+          </tr>
+          {{#each datos}}
+          <tr>
+            <td>{{salon_id}}</td>
+            <td>{{salon_nombre}}</td>
+            <td>{{cantidad_reservas}}</td>
+            <td>${{total_ingresos}}</td>
+          </tr>
+          {{/each}}
+        </table>
+      {{else if (eq tipo "por_fecha")}}
+        <table>
+          <tr>
+            <th>Fecha</th>
+            <th>Cantidad Reservas</th>
+            <th>Total Ingresos</th>
+          </tr>
+          {{#each datos}}
+          <tr>
+            <td>{{fecha_reserva}}</td>
+            <td>{{cantidad_reservas}}</td>
+            <td>${{total_ingresos}}</td>
+          </tr>
+          {{/each}}
+        </table>
+      {{/if}}
+    {{else}}
+      <p>No hay datos disponibles para el período seleccionado.</p>
+    {{/if}}
+  </body>
+</html>
+
