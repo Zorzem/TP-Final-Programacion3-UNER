@@ -1,7 +1,6 @@
 import Usuarios from "../db/usuarios.js";
 
 export default class UsuariosService {
-  
   constructor() {
     this.usuarios = new Usuarios();
   }

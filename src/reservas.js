@@ -13,6 +13,9 @@ import morgan from 'morgan';
 import fs from 'fs';
 
 import { estrategia, validacion} from './config/passport.js';
+// LUXON para zona horaria
+import { DateTime } from 'luxon';
+
 
 
 process.loadEnvFile();
@@ -26,10 +29,22 @@ passport.use(estrategia);
 passport.use(validacion);
 app.use(passport.initialize());
 
+
+
+// Token personalizado para Morgan con hora de Argentina
+morgan.token('fecha-argentina', () => {
+  return DateTime.now()
+    .setZone('America/Argentina/Buenos_Aires')
+    .toFormat('dd/MM/yyyy HH:mm:ss');
+});
+
+// Formato personalizado de Morgan
+const formatoPersonalizado = ':fecha-argentina | :method | :url | :status | :response-time ms | :res[content-length]';
+
 // morgan
 let log = fs.createWriteStream('./access.log', { flags: 'a' })
-app.use(morgan('combined')) // en consola
-app.use(morgan('combined', { stream: log })) // en el archivo */
+app.use(morgan(formatoPersonalizado)); // en consola
+app.use(morgan(formatoPersonalizado, { stream: log })); // en el archivo
 
 
 
