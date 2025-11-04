@@ -41,12 +41,12 @@ crear = async ({ nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, ce
   foto = foto ?? null;
 
   // Hashear la contraseña con SHA-256
-  const hashContrasenia = crypto.createHash('sha256').update(contrasenia).digest('hex');
+  //const hashContrasenia = crypto.createHash('sha256').update(contrasenia).digest('hex');
 
   const [result] = await conexion.execute(
     `INSERT INTO usuarios (nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, creado, activo)
      VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 1)`,
-    [nombre, apellido, nombre_usuario, hashContrasenia, tipo_usuario, celular, foto]
+    [nombre, apellido, nombre_usuario, tipo_usuario, celular, foto]
   );
   return result.insertId;
 };
