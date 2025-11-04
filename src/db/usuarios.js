@@ -46,6 +46,7 @@ crear = async ({ nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, ce
   const [result] = await conexion.execute(
     `INSERT INTO usuarios (nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto, creado, activo)
      VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 1)`,
+    //[nombre, apellido, nombre_usuario, hashContrasenia, tipo_usuario, celular, foto]
     [nombre, apellido, nombre_usuario, tipo_usuario, celular, foto]
   );
   return result.insertId;
