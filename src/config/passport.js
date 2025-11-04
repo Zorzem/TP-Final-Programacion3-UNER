@@ -11,16 +11,20 @@ const estrategia = new LocalSrategy({
     async (nombre_usuario, contrasenia, done) => {
         try{
              // 🔍 LOGS DE DEPURACIÓN
-            console.log('--- AUTORIZACION TESTIGO DE ESTRATEGIA LOCAL - VALIDACION DE DATOS ---');
+            console.log('--- CONFIG -  AUTORIZACION TESTIGO DE ESTRATEGIA LOCAL - VALIDACION DE DATOS CONFIG---');
             console.log('Nombre de usuario recibido:', nombre_usuario);
             console.log('Contraseña recibida:', contrasenia);
 
             const usuariosServicio = new UsuariosService();
-            const usuario = await usuariosServicio.buscar(nombre_usuario, contrasenia);
+            
 
+            const usuario = await usuariosServicio.buscar(nombre_usuario, contrasenia);
+            console.log('USUARIO:', usuario);
 
             // 🔍 LOG PARA VER SI DEVUELVE USUARIO
-            console.log('Usuario encontrado en DB:', usuario);
+            console.log('config - Usuario encontrado en DB:', usuario);
+
+
             if(!usuario){
                 console.log('Login incorrecto -> no se encontró usuario o contraseña no coincide');
                 return done(null, false, { mensaje: 'Login incorrecto!'})
