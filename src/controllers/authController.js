@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
-import passport from 'passport';
+import passport from 'passport'; 
 
 export default class AuthController{
     login = async (req, res) => {        
-        console.log('--- LOGIN REQUEST BODY ---', req.body);
+        console.log('--- LOGIN REQUEST BODY AUTORIZACION ---', req.body);
 
         passport.authenticate('local', {session: false}, (err, usuario, info) => {
             console.log('passport callback -> err:', err, 'usuario:', usuario ? true : usuario, 'info:', info);

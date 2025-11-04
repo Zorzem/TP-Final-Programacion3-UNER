@@ -11,7 +11,7 @@ import passport from 'passport';
 // MORGAN
 import morgan from 'morgan';
 import fs from 'fs';
-
+//
 import { estrategia, validacion} from './config/passport.js';
 
 process.loadEnvFile();
