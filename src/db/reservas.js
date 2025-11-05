@@ -3,6 +3,16 @@
 import { conexion } from "./conexion.js";
 
 export default class Reservas {
+
+
+
+  buscarPropias = async(usuario_id) => {
+    const sql = 'SELECT * FROM reservas WHERE activo = 1 AND usuario_id = ?';
+    const [reservas] = await conexion.execute(sql, [usuario_id]);
+    return reservas;
+  }
+
+  
   buscarTodos = async (incluirInactivos = false) => {
     let sql = `
       SELECT 
@@ -82,7 +92,7 @@ export default class Reservas {
     if (salonRows.length === 0) throw new Error(`El salón con ID ${salon_id} no existe`);
     const importeSalon = parseFloat(salonRows[0].importe);
 
-    const listaServicios = this.#parsearServicios(servicios);
+    const listaServicios = this.parsearServicios(servicios);
 
     let totalServicios = 0;
     for (const s of listaServicios) {
@@ -137,7 +147,7 @@ export default class Reservas {
       if (salonRows.length > 0) importeSalon = parseFloat(salonRows[0].importe);
     }
 
-    const listaServicios = this.#parsearServicios(datos.servicios);
+    const listaServicios = this.parsearServicios(datos.servicios);
     let totalServicios = 0;
     for (const s of listaServicios) {
       const id = typeof s === "object" ? s.servicio_id : s;
@@ -212,7 +222,7 @@ export default class Reservas {
     return rows;
   };
 
-  #parsearServicios(servicios) {
+  parsearServicios(servicios) {
     if (!servicios) return [];
     if (Array.isArray(servicios)) return servicios;
     if (typeof servicios === "string") {
