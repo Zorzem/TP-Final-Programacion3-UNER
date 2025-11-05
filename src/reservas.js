@@ -13,12 +13,15 @@ import morgan from 'morgan';
 import fs from 'fs';
 //
 import {estrategia, validacion} from './config/passport.js';
+import encuestasRoutes from "./v1/routes/encuestasRoutes.js";
+import reportesRoutes from "./v1/routes/reportesRoutes.js";
 
 process.loadEnvFile();
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // CONFIGURACION PASSPORT
 passport.use(estrategia);
@@ -68,6 +71,9 @@ app.use("/api/v1/salones", salonesRoutes);
 app.use("/api/v1/turnos", turnosRoutes);
 //app.use("/api/v1/reservas", reservasRoutes);
 app.use("/api/v1/usuarios", usuariosRoutes);
+app.use("/api/v1/encuestas", encuestasRoutes);
+app.use("/api/v1/reportes", reportesRoutes);
+
 
 
 // AHORA LA RUTA REQUIERE DE AUTENTICACIÓN

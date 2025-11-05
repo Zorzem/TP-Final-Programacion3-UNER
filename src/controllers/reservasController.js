@@ -11,9 +11,11 @@ export default class ReservasController {
       const { incluirInactivos } = req.query;
       const incluir = incluirInactivos === "true";
       const reservas = await this.reservasService.buscarTodos(incluir,req.usuar);
+      const incluir = String(req.query.incluirInactivos) === "true";
+      const reservas = await this.reservasService.buscarTodos(incluir);
       return successResponse(res, reservas, "Reservas encontradas");
     } catch (error) {
-      console.log("Error en GET /reservas", error);
+      console.error("Error en GET /reservas:", error);
       return errorResponse(res);
     }
   }; */
@@ -45,28 +47,25 @@ export default class ReservasController {
       const reserva = await this.reservasService.buscarPorId(id);
       if (!reserva) return notFoundResponse(res, `Reserva con ID ${id} no encontrada`);
 
-      // agregar servicios asociados
       const servicios = await this.reservasService.obtenerServicios(id);
       reserva.servicios = servicios;
 
       return successResponse(res, reserva, "Reserva encontrada");
     } catch (error) {
-      console.log(`Error en GET /reservas/${req.params.id}`, error);
+      console.error(`Error en GET /reservas/${req.params.id}:`, error);
       return errorResponse(res);
     }
   };
 
   crear = async (req, res) => {
     try {
-      const {
+      let {
         fecha_reserva,
         salon_id,
         usuario_id,
         turno_id,
-        foto_cumpleaniero,
         tematica,
         importe_salon,
-        importe_total,
         servicios,
       } = req.body;
 
@@ -75,20 +74,44 @@ export default class ReservasController {
       if (!salon_id) faltantes.push("salon_id");
       if (!usuario_id) faltantes.push("usuario_id");
       if (!turno_id) faltantes.push("turno_id");
-
       if (faltantes.length > 0) {
         return errorResponse(res, `Faltan datos obligatorios: ${faltantes.join(", ")}`, 400);
       }
 
-      // validar fecha (mysql usa YYYY-MM-DD)
       const formatoValido = /^\d{4}-\d{2}-\d{2}$/;
       if (!formatoValido.test(fecha_reserva)) {
-        return errorResponse(res, "Formato de fecha inválido, usá YYY-MM-DD", 400);
+        return errorResponse(res, "Formato de fecha inválido, usá YYYY-MM-DD", 400);
+      }
+      const [y, m, d] = fecha_reserva.split("-").map(Number);
+      const fechaTest = new Date(fecha_reserva + "T00:00:00Z");
+      if (
+        Number.isNaN(fechaTest.getTime()) ||
+        fechaTest.getUTCFullYear() !== y ||
+        fechaTest.getUTCMonth() + 1 !== m ||
+        fechaTest.getUTCDate() !== d
+      ) {
+        return errorResponse(res, "Fecha inválida", 400);
       }
 
-      // validar que los ID sean números
-      if (isNaN(salon_id) || isNaN(usuario_id) || isNaN(turno_id)) {
-        return errorResponse(res, "Los IDs deben ser numéricos", 400);
+      salon_id = Number(salon_id);
+      usuario_id = Number(usuario_id);
+      turno_id = Number(turno_id);
+      if ([salon_id, usuario_id, turno_id].some((n) => !Number.isInteger(n))) {
+        return errorResponse(res, "IDs inválidos (deben ser enteros)", 400);
+      }
+
+      const foto_cumpleaniero = req.file ? req.file.filename : null;
+
+      let serviciosProcesados = [];
+      if (typeof servicios === "string" && servicios.trim() !== "") {
+        try {
+          const parsed = JSON.parse(servicios);
+          if (Array.isArray(parsed)) serviciosProcesados = parsed;
+        } catch (e) {
+          console.warn("No se pudo parsear 'servicios':", servicios);
+        }
+      } else if (Array.isArray(servicios)) {
+        serviciosProcesados = servicios;
       }
 
       const nuevoId = await this.reservasService.crear({
@@ -96,21 +119,16 @@ export default class ReservasController {
         salon_id,
         usuario_id,
         turno_id,
-        foto_cumpleaniero: foto_cumpleaniero ?? null,
+        foto_cumpleaniero,
         tematica: tematica ?? null,
         importe_salon: importe_salon ?? null,
-        importe_total: importe_total ?? null,
-        servicios: Array.isArray(servicios) ? servicios : null,
+        servicios: serviciosProcesados,
       });
 
       return successResponse(res, { id: nuevoId }, "Reserva creada con éxito", 201);
     } catch (error) {
-      console.log("Error en POST /reservas", error);
-      // si un FK no existe devuelve 400
-      if (typeof error.message === "string" && error.message.includes("no existe")) {
-        return errorResponse(res, error.message, 400);
-      }
-      return errorResponse(res);
+      console.error("Error en POST /reservas:", error);
+      return errorResponse(res, error.message, 500);
     }
   };
 
@@ -126,16 +144,27 @@ export default class ReservasController {
         "foto_cumpleaniero",
         "tematica",
         "importe_salon",
-        "importe_total",
         "activo",
         "servicios",
       ];
-      const camposRecibidos = Object.keys(req.body);
 
+      const datos = { ...req.body };
+
+      if (req.file) datos.foto_cumpleaniero = req.file.filename;
+
+      if (typeof datos.servicios === "string" && datos.servicios.trim() !== "") {
+        try {
+          const parsed = JSON.parse(datos.servicios);
+          if (Array.isArray(parsed)) datos.servicios = parsed;
+        } catch (e) {
+          return errorResponse(res, "Formato inválido de 'servicios'", 400);
+        }
+      }
+
+      const camposRecibidos = Object.keys(datos);
       if (camposRecibidos.length === 0) {
         return errorResponse(res, "No se enviaron campos para actualizar", 400);
       }
-
       const invalidos = camposRecibidos.filter((campo) => !camposValidos.includes(campo));
       if (invalidos.length > 0) {
         return errorResponse(
@@ -145,13 +174,41 @@ export default class ReservasController {
         );
       }
 
-      const actualizado = await this.reservasService.editar(id, req.body);
+      ["salon_id", "usuario_id", "turno_id"].forEach((k) => {
+        if (k in datos && datos[k] !== null && datos[k] !== "") {
+          const n = Number(datos[k]);
+          if (!Number.isInteger(n)) {
+            throw new Error(`El campo ${k} debe ser un entero`);
+          }
+          datos[k] = n;
+        }
+      });
+
+      if ("fecha_reserva" in datos) {
+        const formatoValido = /^\d{4}-\d{2}-\d{2}$/;
+        if (!formatoValido.test(datos.fecha_reserva)) {
+          return errorResponse(res, "Formato de fecha inválido, usá YYYY-MM-DD", 400);
+        }
+        const [y, m, d] = datos.fecha_reserva.split("-").map(Number);
+        const fechaTest = new Date(datos.fecha_reserva + "T00:00:00Z");
+        if (
+          Number.isNaN(fechaTest.getTime()) ||
+          fechaTest.getUTCFullYear() !== y ||
+          fechaTest.getUTCMonth() + 1 !== m ||
+          fechaTest.getUTCDate() !== d
+        ) {
+          return errorResponse(res, "Fecha inválida", 400);
+        }
+      }
+
+      const actualizado = await this.reservasService.editar(id, datos);
       if (!actualizado) return notFoundResponse(res, `Reserva con ID ${id} no encontrada`);
 
       return successResponse(res, null, `Reserva con ID ${id} actualizada correctamente`);
     } catch (error) {
-      console.log(`Error en PUT /reservas/${req.params.id}`, error);
-      return errorResponse(res);
+      console.error(`Error en PUT /reservas/${req.params.id}:`, error);
+      const msg = error?.message || "Error interno";
+      return errorResponse(res, msg);
     }
   };
 
@@ -159,10 +216,12 @@ export default class ReservasController {
     try {
       const { id } = req.params;
       const resultado = await this.reservasService.eliminar(id);
-      if (resultado && resultado.affectedRows === 0) return notFoundResponse(res, `Reserva con ID ${id} no encontrada`);
+      if (resultado?.affectedRows === 0) {
+        return notFoundResponse(res, `Reserva con ID ${id} no encontrada`);
+      }
       return successResponse(res, null, `Reserva con ID ${id} eliminada correctamente`);
     } catch (error) {
-      console.log("Error en DELETE /reservas/:id", error);
+      console.error("Error en DELETE /reservas/:id:", error);
       return errorResponse(res);
     }
   };
