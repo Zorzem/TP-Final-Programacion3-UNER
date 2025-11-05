@@ -1,4 +1,7 @@
-import express from "express";
+import express from 'express';
+import { check } from 'express-validator';
+import { validarCampos } from '../../middlewares/validarCampos.js';
+import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
 import ReservasController from "../../controllers/reservasController.js";
 import multer from "multer";
 import path from "path";
