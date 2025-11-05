@@ -14,7 +14,7 @@ router.put("/:id", reservasController.editar);
 router.delete("/:id", reservasController.eliminar);
 
 
-router.get('/:reserva_id',  autorizarUsuarios([1,2,3]), reservasController.buscarPorId);
+router.get('/:reserva_id',  autorizarUsuarios([1,3]), reservasController.buscarPorId);
 
 router.get('/',  autorizarUsuarios([1,2,3]), reservasController.buscarTodos);
 

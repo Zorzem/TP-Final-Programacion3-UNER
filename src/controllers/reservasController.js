@@ -6,17 +6,38 @@ export default class ReservasController {
     this.reservasService = new ReservasService();
   }
 
-  buscarTodos = async (req, res) => {
+/*   buscarTodos = async (req, res) => {
     try {
       const { incluirInactivos } = req.query;
       const incluir = incluirInactivos === "true";
-      const reservas = await this.reservasService.buscarTodos(incluir);
+      const reservas = await this.reservasService.buscarTodos(incluir,req.usuar);
       return successResponse(res, reservas, "Reservas encontradas");
     } catch (error) {
       console.log("Error en GET /reservas", error);
       return errorResponse(res);
     }
-  };
+  }; */
+
+  buscarTodos = async (req, res) => {
+      try {
+
+          const reservas = await this.reservasService.buscarTodos(req.user);
+
+          res.json({
+              estado: true, 
+              datos: reservas
+          });
+  
+      } catch (err) {
+          console.log('Error en GET /reservas', err);
+          res.status(500).json({
+              estado: false,
+              mensaje: 'Error interno del servidor.'
+          });
+      }
+  }
+
+
 
   buscarPorId = async (req, res) => {
     try {

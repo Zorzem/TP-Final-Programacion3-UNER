@@ -24,7 +24,18 @@ export default class Reservas {
     return reservas;
   };
 
-  buscarPorId = async (id) => {
+
+
+  buscarPorId = async(reserva_id) => {
+    const sql = 'SELECT * FROM reservas WHERE activo = 1 AND reserva_id = ?';
+    const [reserva] = await conexion.execute(sql, [reserva_id]);
+    if(reserva.length === 0){
+        return null;
+    }
+
+    return reserva[0];
+}
+/*   buscarPorId = async (id) => {
     const sql = `
       SELECT 
         r.*,
@@ -42,7 +53,7 @@ export default class Reservas {
     `;
     const [rows] = await conexion.execute(sql, [id]);
     return rows[0] || null;
-  };
+  }; */
 
   crear = async ({
     fecha_reserva,
