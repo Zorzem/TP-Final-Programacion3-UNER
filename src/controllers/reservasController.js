@@ -1,3 +1,5 @@
+// src/controllers/reservasController.js
+
 import { successResponse, errorResponse, notFoundResponse } from "../utils/apiResponse.js";
 import ReservasService from "../services/reservasService.js";
 
@@ -6,7 +8,7 @@ export default class ReservasController {
     this.reservasService = new ReservasService();
   }
 
-/*   buscarTodos = async (req, res) => {
+  /*   buscarTodos = async (req, res) => {
     try {
       const { incluirInactivos } = req.query;
       const incluir = incluirInactivos === "true";
@@ -21,25 +23,21 @@ export default class ReservasController {
   }; */
 
   buscarTodos = async (req, res) => {
-      try {
+    try {
+      const reservas = await this.reservasService.buscarTodos(req.user);
 
-          const reservas = await this.reservasService.buscarTodos(req.user);
-
-          res.json({
-              estado: true, 
-              datos: reservas
-          });
-  
-      } catch (err) {
-          console.log('Error en GET /reservas', err);
-          res.status(500).json({
-              estado: false,
-              mensaje: 'Error interno del servidor.'
-          });
-      }
-  }
-
-
+      res.json({
+        estado: true,
+        datos: reservas,
+      });
+    } catch (err) {
+      console.log("Error en GET /reservas", err);
+      res.status(500).json({
+        estado: false,
+        mensaje: "Error interno del servidor.",
+      });
+    }
+  };
 
   buscarPorId = async (req, res) => {
     try {
@@ -59,15 +57,7 @@ export default class ReservasController {
 
   crear = async (req, res) => {
     try {
-      let {
-        fecha_reserva,
-        salon_id,
-        usuario_id,
-        turno_id,
-        tematica,
-        importe_salon,
-        servicios,
-      } = req.body;
+      let { fecha_reserva, salon_id, usuario_id, turno_id, tematica, importe_salon, servicios } = req.body;
 
       const faltantes = [];
       if (!fecha_reserva) faltantes.push("fecha_reserva");

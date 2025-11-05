@@ -22,23 +22,60 @@ Segundo cuatrimestre 2025
 
 ## Estructura del proyecto
 
-```
-proyecto-reservas/
-├── controllers/
-│   └── serviciosController.js    # Lógica de controladores
-├── services/
-│   └── serviciosService.js       # Lógica de negocio
-├── db/
-│   ├── conexion.js               # Configuración de BD
-│   └── servicios.js              # Capa de acceso a datos
-├── utils/apiResponse.js          # Para manejar respuestas de la API
-├── v1/
-│   └── routes/
-│       └── serviciosRoutes.js    # Definición de rutas API v1
-├── reservas.js                   # Punto de entrada de la aplicación
-├── schema.sql                    # Esquema de la base de datos
-├── .env                          # Variables de entorno
-└── test.http                     # Archivo de testing para realizar pruebas HTTP rápidas
+```bash
+src
+├── config                    # archivos de configuración general 
+│   ├── passport.js           # configuración de autenticación 
+│   └── swagger.js            # configuración de Swagger para los docs
+├── controllers               # controladores que reciben la petición y llaman a los servicios
+│   ├── authController.js
+│   ├── encuestasController.js
+│   ├── reportesController.js
+│   ├── reservasController.js
+│   ├── salonesController.js
+│   ├── serviciosController.js
+│   ├── turnosController.js
+│   └── usuariosController.js
+├── db                        # acceso a la BD, consultas y modelos
+│   ├── conexion.js           # conexión a la BD
+│   ├── encuestas.js
+│   ├── reportes.js
+│   ├── reservas.js
+│   ├── salones.js
+│   ├── servicios.js
+│   ├── turnos.js
+│   └── usuarios.js
+├── middlewares               # funciones intermedias que se ejecutan antes de los controladores
+│   ├── autorizarUsuarios.js  # control de permisos y roles
+│   └── validarCampos.js      # validación de datos entrantes
+├── services                  # lógica de negocio y reglas de la aplicación
+│   ├── encuestasService.js
+│   ├── notificacionesService.js
+│   ├── reportesService.js
+│   ├── reservasService.js
+│   ├── salonesService.js
+│   ├── serviciosService.js
+│   ├── turnosService.js
+│   └── usuariosService.js
+├── utils                     # utilidades generales
+│   ├── handlebars            # plantillas para generar reportes
+│   │   ├── plantilla.hbs
+│   │   └── reporte.hbs
+│   └── apiResponse.js        # funciones para estandarizar respuestas de la API
+├── v1
+│   └── routes                # rutas de la API
+│       ├── authRoutes.js
+│       ├── encuestasRoutes.js
+│       ├── reportesRoutes.js
+│       ├── reservasRoutes.js
+│       ├── salonesRoutes.js
+│       ├── serviciosRoutes.js
+│       ├── turnosRoutes.js
+│       └── usuariosRoutes.js
+├── main.js                   # entrada principal de la app
+├── .env.example              # archivo .env de ejemplo
+├── sql/                      # esquema de la BD y procedimientos almacenados
+└── test/                     # archivos para testear las diferentes solicitudes HTTP
 ```
 
 ## Instalación
@@ -64,6 +101,7 @@ proyecto-reservas/
    DB_USER=usuario
    DB_PASSWORD=contraseña
    DB_DATABASE=nombre_bd
+   JWT_SECRET=pass123
    ```
 
 4. **Levantar el servidor**
@@ -71,54 +109,10 @@ proyecto-reservas/
    npm run dev
    ```
 
-### Ejemplos de uso
-
-Obtener todos los servicios:
+### Acceder a la documentación de Swagger
 
 ```bash
-GET http://localhost:3000/api/v1/servicios
-```
-
-Obtener todos los servicios (incluyendo inactivos):
-
-```bash
-GET http://localhost:3000/api/v1/servicios?incluirInactivos=true
-```
-
-Obtener servicio por ID:
-
-```bash
-GET http://localhost:3000/api/v1/servicios/4
-```
-
-Crear un nuevo servicio:
-
-```bash
-POST http://localhost:3000/api/v1/servicios
-Content-Type: application/json
-
-{
-  "descripcion": "Corte de pelo",
-  "importe": 5000
-}
-```
-
-Actualizar un servicio:
-
-```bash
-PUT http://localhost:3000/api/v1/servicios/4
-Content-Type: application/json
-
-{
-  "descripcion": "Corte y barba",
-  "importe": 7500
-}
-```
-
-Eliminar un servicio:
-
-```bash
-DELETE http://localhost:3000/api/v1/servicios/4
+http://localhost:3000/api-docs/
 ```
 
 ---

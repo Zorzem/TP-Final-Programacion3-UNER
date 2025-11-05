@@ -1,3 +1,5 @@
+// src/utils/apiResponse.js
+
 // respuesta exitosa
 export const successResponse = (res, data = null, message = "Operación exitosa", status = 200) => {
   return res.status(status).json({

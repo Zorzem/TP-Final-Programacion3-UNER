@@ -1,8 +1,225 @@
+// src/v1/routes/salonesRoutes.js
+
 import express from "express";
 import SalonesController from "../../controllers/salonesController.js";
 
 const salonesController = new SalonesController();
 const router = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Salones
+ *   description: Gestión de salones
+ */
+
+/**
+ * @swagger
+ * /salones:
+ *   get:
+ *     summary: Obtiene todos los salones
+ *     tags: [Salones]
+ *     parameters:
+ *       - in: query
+ *         name: incluirInactivos
+ *         schema:
+ *           type: boolean
+ *         description: Incluir salones inactivos
+ *         example: false
+ *     responses:
+ *       200:
+ *         description: Lista de salones encontrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 estado:
+ *                   type: boolean
+ *                   example: true
+ *                 datos:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       titulo:
+ *                         type: string
+ *                         example: "Salón Principal"
+ *                       direccion:
+ *                         type: string
+ *                         example: "Calle Falsa 123"
+ *                       latitud:
+ *                         type: number
+ *                         example: -34.6037
+ *                       longitud:
+ *                         type: number
+ *                         example: -58.3816
+ *                       capacidad:
+ *                         type: integer
+ *                         example: 50
+ *                       importe:
+ *                         type: number
+ *                         example: 5000
+ */
+
+/**
+ * @swagger
+ * /salones/{id}:
+ *   get:
+ *     summary: Obtiene un salón por su ID
+ *     tags: [Salones]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del salón
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Salón encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 estado:
+ *                   type: boolean
+ *                   example: true
+ *                 datos:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     titulo:
+ *                       type: string
+ *                       example: "Salón Principal"
+ *                     direccion:
+ *                       type: string
+ *                       example: "Calle Falsa 123"
+ *                     latitud:
+ *                       type: number
+ *                       example: -34.6037
+ *                     longitud:
+ *                       type: number
+ *                       example: -58.3816
+ *                     capacidad:
+ *                       type: integer
+ *                       example: 50
+ *                     importe:
+ *                       type: number
+ *                       example: 5000
+ *       404:
+ *         description: Salón no encontrado
+ */
+
+/**
+ * @swagger
+ * /salones:
+ *   post:
+ *     summary: Crea un nuevo salón
+ *     tags: [Salones]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - titulo
+ *               - direccion
+ *               - capacidad
+ *               - importe
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *                 example: "Salón Principal"
+ *               direccion:
+ *                 type: string
+ *                 example: "Calle Falsa 123"
+ *               latitud:
+ *                 type: number
+ *                 example: -34.6037
+ *               longitud:
+ *                 type: number
+ *                 example: -58.3816
+ *               capacidad:
+ *                 type: integer
+ *                 example: 50
+ *               importe:
+ *                 type: number
+ *                 example: 5000
+ *     responses:
+ *       201:
+ *         description: Salón creado exitosamente
+ *       400:
+ *         description: Datos inválidos
+ */
+
+/**
+ * @swagger
+ * /salones/{id}:
+ *   put:
+ *     summary: Edita un salón existente
+ *     tags: [Salones]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del salón a editar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *               direccion:
+ *                 type: string
+ *               latitud:
+ *                 type: number
+ *               longitud:
+ *                 type: number
+ *               capacidad:
+ *                 type: integer
+ *               importe:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Salón actualizado correctamente
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Salón no encontrado
+ */
+
+/**
+ * @swagger
+ * /salones/{id}:
+ *   delete:
+ *     summary: Elimina un salón
+ *     tags: [Salones]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del salón a eliminar
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Salón eliminado correctamente
+ *       404:
+ *         description: Salón no encontrado
+ */
 
 router.get("/", salonesController.buscarTodos);
 router.get("/:id", salonesController.buscarPorId);

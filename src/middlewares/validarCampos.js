@@ -1,14 +1,16 @@
+// src/middlewares/validarCampos.js
+
 import { validationResult } from "express-validator";
 
 export const validarCampos = (req, res, next) => {
-    const errores = validationResult(req);
+  const errores = validationResult(req);
 
-    if (!errores.isEmpty()){
-        return res.status(400).json({
-            estado: "Falla",
-            mensaje: errores.mapped()
-        })
-    }
+  if (!errores.isEmpty()) {
+    return res.status(400).json({
+      estado: "Falla",
+      mensaje: errores.mapped(),
+    });
+  }
 
-    next();
-}   
+  next();
+};
