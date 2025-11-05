@@ -1,3 +1,5 @@
+// src/db/salones.js
+
 import { conexion } from "./conexion.js";
 
 export default class Salones {

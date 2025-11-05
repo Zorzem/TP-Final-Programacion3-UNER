@@ -1,3 +1,5 @@
+// src/controllers/salonesController.js
+
 import { successResponse, errorResponse, notFoundResponse } from "../utils/apiResponse.js";
 import SalonesService from "../services/salonesService.js";
 

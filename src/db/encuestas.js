@@ -1,7 +1,8 @@
+// src/db/encuestas.js
+
 import { conexion } from "./conexion.js";
 
 export default class Encuestas {
-
   buscarTodos = async (incluirInactivos = false) => {
     let sql = `
       SELECT 

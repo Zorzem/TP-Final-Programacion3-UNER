@@ -1,3 +1,5 @@
+// src/services/reservasService.js
+
 import { conexion } from "../db/conexion.js";
 import Reservas from "../db/reservas.js";
 import NotificacionesService from "./notificacionesService.js";
@@ -9,21 +11,17 @@ export default class ReservasService {
     this.notificacionesService = new NotificacionesService();
   }
 
-/*   buscarTodos = (incluirInactivos = false) => {
+  /*   buscarTodos = (incluirInactivos = false) => {
     return this.reservas.buscarTodos(incluirInactivos);
   }; */
-  
+
   buscarTodos = (usuario) => {
-
-      if(usuario.tipo_usuario < 3){
-          return this.reservas.buscarTodos();
-      }else{
-          return this.reservas.buscarPropias(usuario.usuario_id);
-      }
-
-  }
-
-
+    if (usuario.tipo_usuario < 3) {
+      return this.reservas.buscarTodos();
+    } else {
+      return this.reservas.buscarPropias(usuario.usuario_id);
+    }
+  };
 
   buscarPorId = async (id) => {
     return this.reservas.buscarPorId(id);

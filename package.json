@@ -2,10 +2,10 @@
   "name": "app-reservas",
   "version": "1.0.0",
   "description": "TP-Final-Programacion3-UNER",
-  "main": "src/reservas.js",
+  "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/reservas.js"
+    "dev": "node --watch src/main.js"
   },
   "author": "Grupo AV",
   "license": "ISC",
@@ -21,6 +21,8 @@
     "nodemailer": "^7.0.6",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }

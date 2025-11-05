@@ -1,3 +1,5 @@
+// src/db/reportes.js
+
 import { conexion } from "./conexion.js";
 
 export default class Reportes {
@@ -25,4 +27,3 @@ export default class Reportes {
     return Array.isArray(result[0]) ? result[0] : result;
   };
 }
-

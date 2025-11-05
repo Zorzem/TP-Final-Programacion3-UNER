@@ -1,3 +1,5 @@
+// src/services/reportesService.js
+
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -42,10 +44,7 @@ export default class ReportesService {
   };
 
   generarHTML = (datos, filtros) => {
-    const plantillaPath = path.join(
-      __dirname,
-      "../utils/handlebars/reporte.hbs"
-    );
+    const plantillaPath = path.join(__dirname, "../utils/handlebars/reporte.hbs");
     let template;
 
     try {
@@ -74,4 +73,3 @@ export default class ReportesService {
     return Buffer.from(html, "utf-8");
   };
 }
-

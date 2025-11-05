@@ -1,3 +1,5 @@
+// src/db/reservas.js
+
 import { conexion } from "./conexion.js";
 
 export default class Reservas {
@@ -76,12 +78,8 @@ export default class Reservas {
       throw new Error("Datos insuficientes para crear reserva");
     }
 
-    const [salonRows] = await conexion.execute(
-      "SELECT importe FROM salones WHERE salon_id = ?",
-      [salon_id]
-    );
-    if (salonRows.length === 0)
-      throw new Error(`El salón con ID ${salon_id} no existe`);
+    const [salonRows] = await conexion.execute("SELECT importe FROM salones WHERE salon_id = ?", [salon_id]);
+    if (salonRows.length === 0) throw new Error(`El salón con ID ${salon_id} no existe`);
     const importeSalon = parseFloat(salonRows[0].importe);
 
     const listaServicios = this.#parsearServicios(servicios);
@@ -89,12 +87,8 @@ export default class Reservas {
     let totalServicios = 0;
     for (const s of listaServicios) {
       const id = typeof s === "object" ? s.servicio_id : s;
-      const [servicioRows] = await conexion.execute(
-        "SELECT importe FROM servicios WHERE servicio_id = ?",
-        [id]
-      );
-      if (servicioRows.length > 0)
-        totalServicios += parseFloat(servicioRows[0].importe);
+      const [servicioRows] = await conexion.execute("SELECT importe FROM servicios WHERE servicio_id = ?", [id]);
+      if (servicioRows.length > 0) totalServicios += parseFloat(servicioRows[0].importe);
     }
 
     const importeTotal = importeSalon + totalServicios;
@@ -119,16 +113,13 @@ export default class Reservas {
 
     for (const s of listaServicios) {
       const id = typeof s === "object" ? s.servicio_id : s;
-      const [servRow] = await conexion.execute(
-        "SELECT importe FROM servicios WHERE servicio_id = ?",
-        [id]
-      );
-      const importeServicio =
-        servRow.length > 0 ? servRow[0].importe : 0;
-      await conexion.execute(
-        "INSERT INTO reservas_servicios (reserva_id, servicio_id, importe) VALUES (?, ?, ?)",
-        [reservaId, id, importeServicio]
-      );
+      const [servRow] = await conexion.execute("SELECT importe FROM servicios WHERE servicio_id = ?", [id]);
+      const importeServicio = servRow.length > 0 ? servRow[0].importe : 0;
+      await conexion.execute("INSERT INTO reservas_servicios (reserva_id, servicio_id, importe) VALUES (?, ?, ?)", [
+        reservaId,
+        id,
+        importeServicio,
+      ]);
     }
 
     return reservaId;
@@ -137,32 +128,21 @@ export default class Reservas {
   editar = async (id, datos) => {
     if (!id || isNaN(id)) throw new Error("ID inválido");
 
-    const [existe] = await conexion.execute(
-      "SELECT * FROM reservas WHERE reserva_id = ?",
-      [id]
-    );
+    const [existe] = await conexion.execute("SELECT * FROM reservas WHERE reserva_id = ?", [id]);
     if (existe.length === 0) return false;
 
     let importeSalon = existe[0].importe_salon;
     if (datos.salon_id) {
-      const [salonRows] = await conexion.execute(
-        "SELECT importe FROM salones WHERE salon_id = ?",
-        [datos.salon_id]
-      );
-      if (salonRows.length > 0)
-        importeSalon = parseFloat(salonRows[0].importe);
+      const [salonRows] = await conexion.execute("SELECT importe FROM salones WHERE salon_id = ?", [datos.salon_id]);
+      if (salonRows.length > 0) importeSalon = parseFloat(salonRows[0].importe);
     }
 
     const listaServicios = this.#parsearServicios(datos.servicios);
     let totalServicios = 0;
     for (const s of listaServicios) {
       const id = typeof s === "object" ? s.servicio_id : s;
-      const [servicioRows] = await conexion.execute(
-        "SELECT importe FROM servicios WHERE servicio_id = ?",
-        [id]
-      );
-      if (servicioRows.length > 0)
-        totalServicios += parseFloat(servicioRows[0].importe);
+      const [servicioRows] = await conexion.execute("SELECT importe FROM servicios WHERE servicio_id = ?", [id]);
+      if (servicioRows.length > 0) totalServicios += parseFloat(servicioRows[0].importe);
     }
 
     const importeTotal = importeSalon + totalServicios;
@@ -199,25 +179,20 @@ export default class Reservas {
     await conexion.execute("DELETE FROM reservas_servicios WHERE reserva_id = ?", [id]);
     for (const s of listaServicios) {
       const idServ = typeof s === "object" ? s.servicio_id : s;
-      const [servRow] = await conexion.execute(
-        "SELECT importe FROM servicios WHERE servicio_id = ?",
-        [idServ]
-      );
+      const [servRow] = await conexion.execute("SELECT importe FROM servicios WHERE servicio_id = ?", [idServ]);
       const importeServicio = servRow.length > 0 ? servRow[0].importe : 0;
-      await conexion.execute(
-        "INSERT INTO reservas_servicios (reserva_id, servicio_id, importe) VALUES (?, ?, ?)",
-        [id, idServ, importeServicio]
-      );
+      await conexion.execute("INSERT INTO reservas_servicios (reserva_id, servicio_id, importe) VALUES (?, ?, ?)", [
+        id,
+        idServ,
+        importeServicio,
+      ]);
     }
 
     return true;
   };
 
   eliminar = async (id) => {
-    const [resultado] = await conexion.execute(
-      "UPDATE reservas SET activo = 0 WHERE reserva_id = ?",
-      [id]
-    );
+    const [resultado] = await conexion.execute("UPDATE reservas SET activo = 0 WHERE reserva_id = ?", [id]);
     return resultado;
   };
 

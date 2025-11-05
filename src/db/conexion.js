@@ -1,3 +1,5 @@
+// src/db/conexion.js
+
 import mysql from "mysql2/promise";
 process.loadEnvFile();
 
