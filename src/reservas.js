@@ -69,7 +69,6 @@ app.use('/api/v1/auth', authRoutes); // AUTENTICACIÓN
 app.use("/api/v1/servicios", serviciosRoutes);
 app.use("/api/v1/salones", salonesRoutes);
 app.use("/api/v1/turnos", turnosRoutes);
-//app.use("/api/v1/reservas", reservasRoutes);
 app.use("/api/v1/usuarios", usuariosRoutes);
 app.use("/api/v1/encuestas", encuestasRoutes);
 app.use("/api/v1/reportes", reportesRoutes);
