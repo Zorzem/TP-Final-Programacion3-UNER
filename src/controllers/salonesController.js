@@ -6,6 +6,20 @@ export default class SalonesController {
     this.salonesService = new SalonesService();
   }
 
+  /**
+   * @swagger
+   * /api/v1/salones:
+   *   get:
+   *     summary: Obtiene la lista de todos los salones.
+   *     tags: [Salones]
+   *     security:
+   *       - jwtAuth: []
+   *     responses:
+   *       200:
+   *         description: Lista de salones.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   buscarTodos = async (req, res) => {
     try {
       const { incluirInactivos } = req.query;
@@ -18,6 +32,28 @@ export default class SalonesController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/salones/{id}:
+   *   get:
+   *     summary: Obtiene un salón por ID.
+   *     tags: [Salones]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Salón encontrado.
+   *       404:
+   *         description: Salón no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   buscarPorId = async (req, res) => {
     try {
       const { id } = req.params;
@@ -30,6 +66,28 @@ export default class SalonesController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/salones:
+   *   post:
+   *     summary: Crea un nuevo salón.
+   *     tags: [Salones]
+   *     security:
+   *       - jwtAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/SalonCreate'
+   *     responses:
+   *       201:
+   *         description: Salón creado con éxito.
+   *       400:
+   *         description: Faltan datos obligatorios.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   crear = async (req, res) => {
     try {
       const { titulo, direccion, latitud, longitud, capacidad, importe } = req.body;
@@ -72,6 +130,36 @@ export default class SalonesController {
   //   }
   // };
 
+  /**
+   * @swagger
+   * /api/v1/salones/{id}:
+   *   put:
+   *     summary: Actualiza un salón existente.
+   *     tags: [Salones]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/SalonUpdate'
+   *     responses:
+   *       200:
+   *         description: Salón actualizado correctamente.
+   *       400:
+   *         description: Error en la validación de datos.
+   *       404:
+   *         description: Salón no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   editar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -109,6 +197,28 @@ export default class SalonesController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/salones/{id}:
+   *   delete:
+   *     summary: Elimina un salón (eliminación lógica).
+   *     tags: [Salones]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Salón eliminado correctamente.
+   *       404:
+   *         description: Salón no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   eliminar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -121,3 +231,69 @@ export default class SalonesController {
     }
   };
 }
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Salon:
+ *       type: object
+ *       properties:
+ *         salon_id:
+ *           type: integer
+ *         titulo:
+ *           type: string
+ *         direccion:
+ *           type: string
+ *         latitud:
+ *           type: number
+ *         longitud:
+ *           type: number
+ *         capacidad:
+ *           type: integer
+ *         importe:
+ *           type: number
+ *         activo:
+ *           type: boolean
+ *         creado:
+ *           type: string
+ *           format: date-time
+ *         modificado:
+ *           type: string
+ *           format: date-time
+ *     SalonCreate:
+ *       type: object
+ *       required:
+ *         - titulo
+ *         - direccion
+ *         - capacidad
+ *         - importe
+ *       properties:
+ *         titulo:
+ *           type: string
+ *         direccion:
+ *           type: string
+ *         latitud:
+ *           type: number
+ *         longitud:
+ *           type: number
+ *         capacidad:
+ *           type: integer
+ *         importe:
+ *           type: number
+ *     SalonUpdate:
+ *       type: object
+ *       properties:
+ *         titulo:
+ *           type: string
+ *         direccion:
+ *           type: string
+ *         latitud:
+ *           type: number
+ *         longitud:
+ *           type: number
+ *         capacidad:
+ *           type: integer
+ *         importe:
+ *           type: number
+ */

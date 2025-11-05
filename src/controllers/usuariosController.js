@@ -6,6 +6,20 @@ export default class UsuariosController {
     this.usuariosService = new UsuariosService();
   }
 
+  /**
+   * @swagger
+   * /api/v1/usuarios:
+   *   get:
+   *     summary: Obtiene la lista de todos los usuarios.
+   *     tags: [Usuarios]
+   *     security:
+   *       - jwtAuth: []
+   *     responses:
+   *       200:
+   *         description: Lista de usuarios.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   buscarTodos = async (req, res) => {
     try {
       const usuarios = await this.usuariosService.buscarTodos();
@@ -16,6 +30,28 @@ export default class UsuariosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/usuarios/{id}:
+   *   get:
+   *     summary: Obtiene un usuario por ID.
+   *     tags: [Usuarios]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Usuario encontrado.
+   *       404:
+   *         description: Usuario no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   buscarPorId = async (req, res) => {
     try {
       const { id } = req.params;
@@ -28,6 +64,28 @@ export default class UsuariosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/usuarios:
+   *   post:
+   *     summary: Crea un nuevo usuario.
+   *     tags: [Usuarios]
+   *     security:
+   *       - jwtAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UsuarioCreate'
+   *     responses:
+   *       201:
+   *         description: Usuario creado con éxito.
+   *       400:
+   *         description: Faltan datos obligatorios o error de validación.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   crear = async (req, res) => {
     try {
       const { nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, celular, foto } = req.body;
@@ -83,6 +141,36 @@ export default class UsuariosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/usuarios/{id}:
+   *   put:
+   *     summary: Actualiza un usuario existente.
+   *     tags: [Usuarios]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UsuarioUpdate'
+   *     responses:
+   *       200:
+   *         description: Usuario actualizado correctamente.
+   *       400:
+   *         description: Error en la validación de datos.
+   *       404:
+   *         description: Usuario no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   editar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -121,6 +209,28 @@ export default class UsuariosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/usuarios/{id}:
+   *   delete:
+   *     summary: Elimina un usuario (eliminación lógica).
+   *     tags: [Usuarios]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Usuario eliminado correctamente.
+   *       404:
+   *         description: Usuario no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   eliminar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -134,3 +244,76 @@ export default class UsuariosController {
     }
   };
 }
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Usuario:
+ *       type: object
+ *       properties:
+ *         usuario_id:
+ *           type: integer
+ *         nombre:
+ *           type: string
+ *         apellido:
+ *           type: string
+ *         nombre_usuario:
+ *           type: string
+ *         tipo_usuario:
+ *           type: integer
+ *         celular:
+ *           type: string
+ *         foto:
+ *           type: string
+ *         activo:
+ *           type: boolean
+ *         creado:
+ *           type: string
+ *           format: date-time
+ *         modificado:
+ *           type: string
+ *           format: date-time
+ *     UsuarioCreate:
+ *       type: object
+ *       required:
+ *         - nombre
+ *         - apellido
+ *         - nombre_usuario
+ *         - contrasenia
+ *         - tipo_usuario
+ *       properties:
+ *         nombre:
+ *           type: string
+ *         apellido:
+ *           type: string
+ *         nombre_usuario:
+ *           type: string
+ *         contrasenia:
+ *           type: string
+ *         tipo_usuario:
+ *           type: integer
+ *         celular:
+ *           type: string
+ *         foto:
+ *           type: string
+ *     UsuarioUpdate:
+ *       type: object
+ *       properties:
+ *         nombre:
+ *           type: string
+ *         apellido:
+ *           type: string
+ *         nombre_usuario:
+ *           type: string
+ *         contrasenia:
+ *           type: string
+ *         tipo_usuario:
+ *           type: integer
+ *         celular:
+ *           type: string
+ *         foto:
+ *           type: string
+ *         activo:
+ *           type: boolean
+ */

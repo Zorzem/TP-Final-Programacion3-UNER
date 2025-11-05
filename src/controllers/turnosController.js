@@ -6,6 +6,20 @@ export default class TurnosController {
     this.turnosService = new TurnosService();
   }
 
+  /**
+   * @swagger
+   * /api/v1/turnos:
+   *   get:
+   *     summary: Obtiene la lista de todos los turnos.
+   *     tags: [Turnos]
+   *     security:
+   *       - jwtAuth: []
+   *     responses:
+   *       200:
+   *         description: Lista de turnos.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   buscarTodos = async (req, res) => {
     try {
       const { incluirInactivos } = req.query;
@@ -18,6 +32,28 @@ export default class TurnosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/turnos/{id}:
+   *   get:
+   *     summary: Obtiene un turno por ID.
+   *     tags: [Turnos]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Turno encontrado.
+   *       404:
+   *         description: Turno no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   buscarPorId = async (req, res) => {
     try {
       const { id } = req.params;
@@ -30,6 +66,28 @@ export default class TurnosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/turnos:
+   *   post:
+   *     summary: Crea un nuevo turno.
+   *     tags: [Turnos]
+   *     security:
+   *       - jwtAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/TurnoCreate'
+   *     responses:
+   *       201:
+   *         description: Turno creado con éxito.
+   *       400:
+   *         description: Faltan datos obligatorios.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   crear = async (req, res) => {
     try {
       const { orden, hora_desde, hora_hasta } = req.body;
@@ -51,6 +109,36 @@ export default class TurnosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/turnos/{id}:
+   *   put:
+   *     summary: Actualiza un turno existente.
+   *     tags: [Turnos]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/TurnoUpdate'
+   *     responses:
+   *       200:
+   *         description: Turno actualizado correctamente.
+   *       400:
+   *         description: Error en la validación de datos.
+   *       404:
+   *         description: Turno no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   editar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -80,6 +168,28 @@ export default class TurnosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/turnos/{id}:
+   *   delete:
+   *     summary: Elimina un turno (eliminación lógica).
+   *     tags: [Turnos]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Turno eliminado correctamente.
+   *       404:
+   *         description: Turno no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   eliminar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -92,3 +202,58 @@ export default class TurnosController {
     }
   };
 }
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Turno:
+ *       type: object
+ *       properties:
+ *         turno_id:
+ *           type: integer
+ *         orden:
+ *           type: integer
+ *         hora_desde:
+ *           type: string
+ *           format: time
+ *         hora_hasta:
+ *           type: string
+ *           format: time
+ *         activo:
+ *           type: boolean
+ *         creado:
+ *           type: string
+ *           format: date-time
+ *         modificado:
+ *           type: string
+ *           format: date-time
+ *     TurnoCreate:
+ *       type: object
+ *       required:
+ *         - orden
+ *         - hora_desde
+ *         - hora_hasta
+ *       properties:
+ *         orden:
+ *           type: integer
+ *         hora_desde:
+ *           type: string
+ *           format: time
+ *         hora_hasta:
+ *           type: string
+ *           format: time
+ *     TurnoUpdate:
+ *       type: object
+ *       properties:
+ *         orden:
+ *           type: integer
+ *         hora_desde:
+ *           type: string
+ *           format: time
+ *         hora_hasta:
+ *           type: string
+ *           format: time
+ *         activo:
+ *           type: boolean
+ */

@@ -6,6 +6,20 @@ export default class ServiciosController {
     this.serviciosService = new ServiciosService();
   }
 
+  /**
+   * @swagger
+   * /api/v1/servicios:
+   *   get:
+   *     summary: Obtiene la lista de todos los servicios.
+   *     tags: [Servicios]
+   *     security:
+   *       - jwtAuth: []
+   *     responses:
+   *       200:
+   *         description: Lista de servicios.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   buscarTodos = async (req, res) => {
     try {
       const { incluirInactivos } = req.query;
@@ -20,6 +34,28 @@ export default class ServiciosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/servicios/{id}:
+   *   get:
+   *     summary: Obtiene un servicio por ID.
+   *     tags: [Servicios]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Servicio encontrado.
+   *       404:
+   *         description: Servicio no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   buscarPorId = async (req, res) => {
     try {
       const { id } = req.params;
@@ -36,6 +72,36 @@ export default class ServiciosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/servicios/{id}:
+   *   put:
+   *     summary: Actualiza un servicio existente.
+   *     tags: [Servicios]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/ServicioUpdate'
+   *     responses:
+   *       200:
+   *         description: Servicio actualizado correctamente.
+   *       400:
+   *         description: Error en la validación de datos.
+   *       404:
+   *         description: Servicio no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   editar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -76,6 +142,28 @@ export default class ServiciosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/servicios:
+   *   post:
+   *     summary: Crea un nuevo servicio.
+   *     tags: [Servicios]
+   *     security:
+   *       - jwtAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/ServicioCreate'
+   *     responses:
+   *       201:
+   *         description: Servicio creado con éxito.
+   *       400:
+   *         description: Faltan datos obligatorios.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   crear = async (req, res) => {
     try {
       const { descripcion, importe } = req.body;
@@ -93,6 +181,30 @@ export default class ServiciosController {
     }
   };
 
+  /**
+   * @swagger
+   * /api/v1/servicios/{id}:
+   *   delete:
+   *     summary: Elimina un servicio (eliminación lógica).
+   *     tags: [Servicios]
+   *     security:
+   *       - jwtAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Servicio eliminado correctamente.
+   *       400:
+   *         description: ID del servicio es requerido.
+   *       404:
+   *         description: Servicio no encontrado.
+   *       500:
+   *         description: Error interno del servidor.
+   */
   eliminar = async (req, res) => {
     try {
       const { id } = req.params;
@@ -113,3 +225,45 @@ export default class ServiciosController {
     }
   };
 }
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Servicio:
+ *       type: object
+ *       properties:
+ *         servicio_id:
+ *           type: integer
+ *         descripcion:
+ *           type: string
+ *         importe:
+ *           type: number
+ *         activo:
+ *           type: boolean
+ *         creado:
+ *           type: string
+ *           format: date-time
+ *         modificado:
+ *           type: string
+ *           format: date-time
+ *     ServicioCreate:
+ *       type: object
+ *       required:
+ *         - descripcion
+ *         - importe
+ *       properties:
+ *         descripcion:
+ *           type: string
+ *         importe:
+ *           type: number
+ *     ServicioUpdate:
+ *       type: object
+ *       properties:
+ *         descripcion:
+ *           type: string
+ *         importe:
+ *           type: number
+ *         activo:
+ *           type: boolean
+ */
