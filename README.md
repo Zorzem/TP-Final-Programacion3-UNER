@@ -72,7 +72,10 @@ src
 │       ├── serviciosRoutes.js
 │       ├── turnosRoutes.js
 │       └── usuariosRoutes.js
-└── main.js                   # entrada principal de la app
+├── main.js                   # entrada principal de la app
+├── .env.example              # archivo .env de ejemplo
+├── sql/                      # esquema de la BD y procedimientos almacenados
+└── test/                     # archivos para testear las diferentes solicitudes HTTP
 ```
 
 ## Instalación
