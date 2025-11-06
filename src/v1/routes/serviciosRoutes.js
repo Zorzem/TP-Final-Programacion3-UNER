@@ -191,8 +191,24 @@ router.get("/",autorizarUsuarios([1,2,3]), serviciosController.buscarTodos);
 router.get("/:id",autorizarUsuarios([1,2,3]), serviciosController.buscarPorId);
 
 
-router.post("/",autorizarUsuarios([1,2]), serviciosController.crear);
-router.put("/:id",autorizarUsuarios([1,2]), serviciosController.editar);
+router.post("/",autorizarUsuarios([1,2]), 
+    [
+        check("descripcion", "La descripción es obligatoria.").notEmpty(),
+        check("importe", "El importe es obligatorio y debe ser numérico.").notEmpty().isFloat(),
+        validarCampos,
+    ],
+    serviciosController.crear);
+
+router.put("/:id",autorizarUsuarios([1,2]), 
+    [
+        check("descripcion").optional().notEmpty().withMessage("La descripción no puede estar vacía."),
+        check("importe").optional().isFloat().withMessage("El importe debe ser numérico."),
+        check("activo").optional().isBoolean().withMessage("Activo debe ser true o false."),
+        validarCampos,
+    ],
+    serviciosController.editar);
+
+    
 router.delete("/:id",autorizarUsuarios([1,2]), serviciosController.eliminar);
 
 

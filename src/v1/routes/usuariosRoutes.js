@@ -192,8 +192,31 @@ const usuariosController = new UsuariosController();
 
 router.get("/",autorizarUsuarios([1]), usuariosController.buscarTodos);
 router.get("/:id",autorizarUsuarios([1]), usuariosController.buscarPorId);
-router.post("/",autorizarUsuarios([1]), usuariosController.crear);
-router.put("/:id",autorizarUsuarios([1]), usuariosController.editar);
+
+router.post("/",autorizarUsuarios([1]), 
+    [
+        check("nombre", "El nombre es obligatorio.").notEmpty(),
+        check("apellido", "El apellido es obligatorio.").notEmpty(),
+        check("nombre_usuario", "El nombre de usuario es obligatorio.").notEmpty(),
+        check("contrasenia", "La contraseña es obligatoria.").notEmpty(),
+        check("tipo_usuario", "El tipo de usuario es obligatorio.").notEmpty().isInt(),
+        check("celular").optional().isMobilePhone("es-AR").withMessage("El celular no es válido."),
+        validarCampos,
+    ],
+    usuariosController.crear);
+
+router.put("/:id",autorizarUsuarios([1]), 
+    [
+        check("nombre").optional().notEmpty().withMessage("El nombre no puede estar vacío."),
+        check("apellido").optional().notEmpty().withMessage("El apellido no puede estar vacío."),
+        check("nombre_usuario").optional().notEmpty().withMessage("El nombre de usuario no puede estar vacío."),
+        check("contrasenia").optional().notEmpty().withMessage("La contraseña no puede estar vacía."),
+        check("tipo_usuario").optional().isInt().withMessage("El tipo de usuario debe ser un número."),
+        check("celular").optional().isMobilePhone("es-AR").withMessage("El celular no es válido."),
+        validarCampos,
+    ],
+    usuariosController.editar);
+
 router.delete("/:id",autorizarUsuarios([1]), usuariosController.eliminar);
 
 

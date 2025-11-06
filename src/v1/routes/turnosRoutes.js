@@ -206,8 +206,37 @@ const router = express.Router();
 router.get("/",autorizarUsuarios([1,2,3]), turnosController.buscarTodos);
 router.get("/:id",autorizarUsuarios([1,2,3]), turnosController.buscarPorId);
 
-router.post("/",autorizarUsuarios([1,2]), turnosController.crear);
-router.put("/:id",autorizarUsuarios([1,2]), turnosController.editar);
+router.post("/",autorizarUsuarios([1,2]), 
+    [
+        check("orden", "El orden es obligatorio y debe ser un número.")
+        .notEmpty()
+        .isInt(),
+        check("hora_desde", "La hora desde es obligatoria y debe tener formato HH:mm.")
+        .notEmpty()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
+        check("hora_hasta", "La hora hasta es obligatoria y debe tener formato HH:mm.")
+        .notEmpty()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
+        validarCampos,
+    ],
+    turnosController.crear);
+
+router.put("/:id",autorizarUsuarios([1,2]), 
+    [
+        check("orden").optional().isInt().withMessage("El orden debe ser un número."),
+        check("hora_desde")
+        .optional()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+        .withMessage("La hora desde debe tener formato HH:mm."),
+        check("hora_hasta")
+        .optional()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+        .withMessage("La hora hasta debe tener formato HH:mm."),
+        validarCampos,
+    ],
+turnosController.editar);
+
+
 router.delete("/:id",autorizarUsuarios([1,2]), turnosController.eliminar);
 
 

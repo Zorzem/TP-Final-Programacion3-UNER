@@ -228,8 +228,30 @@ const router = express.Router();
 router.get("/",autorizarUsuarios([1,2,3]), salonesController.buscarTodos);
 router.get("/:id",autorizarUsuarios([1,2,3]), salonesController.buscarPorId);
 
-router.post("/",autorizarUsuarios([1,2]), salonesController.crear);
-router.put("/:id",autorizarUsuarios([1,2]), salonesController.editar);
+router.post("/",autorizarUsuarios([1,2]), 
+    [
+        check("titulo", "El título es obligatorio.").notEmpty(),
+        check("direccion", "La dirección es obligatoria.").notEmpty(),
+        check("latitud", "La latitud es obligatoria y debe ser un número.").notEmpty().isFloat(),
+        check("longitud", "La longitud es obligatoria y debe ser un número.").notEmpty().isFloat(),
+        check("capacidad", "La capacidad es obligatoria y debe ser un entero positivo.").notEmpty().isInt({ min: 1 }),
+        check("importe", "El importe es obligatorio y debe ser numérico.").notEmpty().isFloat(),
+        validarCampos,
+    ],
+    salonesController.crear);
+
+router.put("/:id",autorizarUsuarios([1,2]), 
+    [
+        check("titulo").optional().notEmpty().withMessage("El título no puede estar vacío."),
+        check("direccion").optional().notEmpty().withMessage("La dirección no puede estar vacía."),
+        check("latitud").optional().isFloat().withMessage("La latitud debe ser un número."),
+        check("longitud").optional().isFloat().withMessage("La longitud debe ser un número."),
+        check("capacidad").optional().isInt({ min: 1 }).withMessage("La capacidad debe ser un entero positivo."),
+        check("importe").optional().isFloat().withMessage("El importe debe ser numérico."),
+        validarCampos,
+    ],
+    salonesController.editar);
+    
 router.delete("/:id",autorizarUsuarios([1,2]), salonesController.eliminar);
 
 

@@ -86,13 +86,13 @@ const authController = new AuthController();
  */
 router.post(
   "/login",
-  [
-    check("nombre_usuario", "El correo electrónico es requerido!").not().isEmpty(),
-    check("nombre_usuario", "Revisar el formato del correo electrónico!").isEmail(),
-    check("contrasenia", "La contrasenia es requerida!").not().isEmpty(),
-    validarCampos,
-  ],
-  authController.login
+    [
+      check("nombre_usuario", "El correo electrónico es requerido!").not().isEmpty(),
+      check("nombre_usuario", "Revisar el formato del correo electrónico!").isEmail(),
+      check("contrasenia", "La contraseña es requerida!").not().isEmpty(),
+      validarCampos,
+    ],
+    authController.login
 );
 
 export default router;

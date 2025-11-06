@@ -197,9 +197,23 @@ router.get("/", autorizarUsuarios([1]), encuestasController.buscarTodos);
 router.get("/:id", autorizarUsuarios([1]), encuestasController.buscarPorId);
 router.get("/usuario/:usuarioId", autorizarUsuarios([1]), encuestasController.buscarPorUsuario);
 router.get("/salon/:salonId", autorizarUsuarios([1]), encuestasController.buscarPorSalon);
-router.post("/", autorizarUsuarios([3]), encuestasController.crear);
-router.put("/:id", autorizarUsuarios([1]), encuestasController.editar);
-router.delete("/:id", autorizarUsuarios([1]), encuestasController.eliminar);
+
+router.post("/", autorizarUsuarios([3]), 
+    [
+        check("reserva_id", "El ID de la reserva es obligatorio y debe ser un número.")
+        .notEmpty()
+        .isInt(),
+        check("puntaje", "El puntaje es obligatorio y debe ser un número entre 1 y 5.")
+        .notEmpty()
+        .isInt({ min: 1, max: 5 }),
+        check("comentario").optional().isString().withMessage("El comentario debe ser un texto."),
+        validarCampos,
+    ],
+    encuestasController.crear);
+
+// Comento el endpoint de edicion y eliminacion ya que no se deberian poder modificar o eliminar las encuestas una vez creadas
+//router.put("/:id", autorizarUsuarios([1]), encuestasController.editar);
+//router.delete("/:id", autorizarUsuarios([1]), encuestasController.eliminar);
 
 
 export default router;

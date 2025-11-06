@@ -297,7 +297,23 @@ router.post('/', autorizarUsuarios([1,3]),upload.single("foto_cumpleaniero"),
     reservasController.crear);
 
 
-router.put("/:id",  autorizarUsuarios([1]), upload.single("foto_cumpleaniero"), reservasController.editar);
+router.put("/:id",  autorizarUsuarios([1]), upload.single("foto_cumpleaniero"), 
+    [
+      check('fecha_reserva', 'La fecha es necesaria.').optional().notEmpty(),
+      check('salon_id', 'El salón es necesario.').optional().notEmpty(),
+      check('usuario_id', 'El usuario es necesario.').optional().notEmpty(),
+      check('turno_id', 'El turno es necesario.').optional().notEmpty(),
+      check('servicios', 'Faltan los servicios de la reserva.')
+          .optional()
+          .isArray(),
+      check('servicios.*.importe')
+          .optional()
+          .isFloat()
+          .withMessage('El importe debe ser numérico.'),
+      validarCampos
+    ],
+  reservasController.editar);
+  
 router.delete("/:id", autorizarUsuarios([1]), reservasController.eliminar);
 
 
