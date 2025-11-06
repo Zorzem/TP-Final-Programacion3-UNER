@@ -6,6 +6,7 @@ import { swaggerUi, swaggerSpec } from "./config/swagger.js";
 import authRoutes from "./v1/routes/authRoutes.js";
 import encuestasRoutes from "./v1/routes/encuestasRoutes.js";
 import express from "express";
+import cors from "cors";
 import fs from "fs";
 import morgan from "morgan";
 import passport from "passport";
@@ -21,6 +22,8 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
 
 // configuracion passport
 passport.use(estrategia);
