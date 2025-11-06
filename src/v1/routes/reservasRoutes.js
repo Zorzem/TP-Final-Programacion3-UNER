@@ -1,28 +1,26 @@
 // src/v1/routes/reservasRoutes.js
 
 import express from "express";
-import apicache from 'apicache';
+import apicache from "apicache";
 import { check } from "express-validator";
 import { validarCampos } from "../../middlewares/validarCampos.js";
 import autorizarUsuarios from "../../middlewares/autorizarUsuarios.js";
 import ReservasController from "../../controllers/reservasController.js";
 import multer from "multer";
 import path from "path";
-import fs from 'fs';
+import fs from "fs";
 import { fileURLToPath } from "url";
-import verificarToken from '../../middlewares/authJwt.js';
-
+import verificarToken from "../../middlewares/authJwt.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const uploadDir = path.join(__dirname, '../../uploads/cumpleanieros');
+const uploadDir = path.join(__dirname, "../../uploads/cumpleanieros");
 
 // Crear carpeta uploads/cumpleanieros si no existe
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
-
 
 const reservasController = new ReservasController();
 const router = express.Router();
@@ -40,7 +38,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-
 
 /**
  * @swagger
@@ -278,57 +275,53 @@ const upload = multer({ storage });
  *         description: Reserva no encontrada
  */
 
+router.get("/:reserva_id", verificarToken, autorizarUsuarios([1, 2, 3]), reservasController.buscarPorId);
 
-router.get('/:reserva_id', verificarToken, autorizarUsuarios([1,2,3]), reservasController.buscarPorId);
+router.get("/", verificarToken, autorizarUsuarios([1, 2, 3]), cache("5 minutes"), reservasController.buscarTodos);
 
-router.get('/', verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), reservasController.buscarTodos);
-
-router.post('/', verificarToken, autorizarUsuarios([1,3]),upload.single("foto_cumpleaniero"),
-    [
-        check('fecha_reserva', 'La fecha es necesaria.').notEmpty(),
-        check('salon_id', 'El salón es necesario.').notEmpty(),
-        check('usuario_id', 'El usuario es necesario.').notEmpty(), 
-        check('turno_id', 'El turno es necesario.').notEmpty(),  
-        check('servicios', 'Faltan los servicios de la reserva.')
-        .notEmpty()
-        .isArray(),
-        check('servicios.*.importe')
-        .isFloat() 
-        .withMessage('El importe debe ser numérico.'),   
-        validarCampos
-    ],
-    async (req, res, next) => {
-        await reservasController.crear(req, res, next);
-        cacheClear('/api/v1/reservas');
-    }
+router.post(
+  "/",
+  verificarToken,
+  autorizarUsuarios([1, 3]),
+  upload.single("foto_cumpleaniero"),
+  [
+    check("fecha_reserva", "La fecha es necesaria.").notEmpty(),
+    check("salon_id", "El salón es necesario.").notEmpty(),
+    check("usuario_id", "El usuario es necesario.").notEmpty(),
+    check("turno_id", "El turno es necesario.").notEmpty(),
+    check("servicios", "Faltan los servicios de la reserva.").notEmpty().isArray(),
+    check("servicios.*.importe").isFloat().withMessage("El importe debe ser numérico."),
+    validarCampos,
+  ],
+  async (req, res, next) => {
+    await reservasController.crear(req, res, next);
+    cacheClear("/api/v1/reservas");
+  }
 );
 
-
-router.put("/:id", verificarToken,  autorizarUsuarios([1]), upload.single("foto_cumpleaniero"), 
-    [
-      check('fecha_reserva', 'La fecha es necesaria.').optional().notEmpty(),
-      check('salon_id', 'El salón es necesario.').optional().notEmpty(),
-      check('usuario_id', 'El usuario es necesario.').optional().notEmpty(),
-      check('turno_id', 'El turno es necesario.').optional().notEmpty(),
-      check('servicios', 'Faltan los servicios de la reserva.')
-          .optional()
-          .isArray(),
-      check('servicios.*.importe')
-          .optional()
-          .isFloat()
-          .withMessage('El importe debe ser numérico.'),
-      validarCampos
-    ],
-    async (req, res, next) => {
-        await reservasController.editar(req, res, next);
-        cacheClear('/api/v1/reservas');
-    }
+router.put(
+  "/:id",
+  verificarToken,
+  autorizarUsuarios([1]),
+  upload.single("foto_cumpleaniero"),
+  [
+    check("fecha_reserva", "La fecha es necesaria.").optional().notEmpty(),
+    check("salon_id", "El salón es necesario.").optional().notEmpty(),
+    check("usuario_id", "El usuario es necesario.").optional().notEmpty(),
+    check("turno_id", "El turno es necesario.").optional().notEmpty(),
+    check("servicios", "Faltan los servicios de la reserva.").optional().isArray(),
+    check("servicios.*.importe").optional().isFloat().withMessage("El importe debe ser numérico."),
+    validarCampos,
+  ],
+  async (req, res, next) => {
+    await reservasController.editar(req, res, next);
+    cacheClear("/api/v1/reservas");
+  }
 );
-  
+
 router.delete("/:id", verificarToken, autorizarUsuarios([1]), async (req, res, next) => {
-    await reservasController.eliminar(req, res, next);
-    cacheClear('/api/v1/reservas');
+  await reservasController.eliminar(req, res, next);
+  cacheClear("/api/v1/reservas");
 });
-
 
 export default router;

@@ -75,7 +75,7 @@ src
 ├── main.js                   # entrada principal de la app
 ├── .env.example              # archivo .env de ejemplo
 ├── sql/                      # esquema de la BD y procedimientos almacenados
-└── test/                     # archivos para testear las diferentes solicitudes HTTP
+└── test/                     # archivos para testear solicitudes HTTP
 ```
 
 ## Instalación
@@ -109,6 +109,54 @@ src
    npm run dev
    ```
 
+5. **Configurar la autenticación JWT**\
+   Primero es necesario hacer login y obtener el token, pero para ello necesitamos que el usuario exista  previamente en la BD.
+
+Podemos crear un usuario de pruebas ejecutando este código en la BD:
+
+```sql
+INSERT INTO usuarios (nombre, apellido, nombre_usuario, contrasenia, tipo_usuario, activo, creado)
+VALUES ('Admin', 'Test', 'admin@test.com', SHA2('test', 256), 3, 1, NOW()) AS new
+ON DUPLICATE KEY UPDATE
+  tipo_usuario = new.tipo_usuario,
+  contrasenia = new.contrasenia,
+  modificado = NOW();
+```
+
+Esto crea un administrador de nombre de usuario `admin@test.com` con contraseña
+`test`.
+
+Luego podemos loguearnos haciendo una solicitud POST:
+
+```bash
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "nombre_usuario": "admin@test",
+  "contrasenia": "test"
+}
+```
+
+Si las credenciales son válidas (recordar que el usuario DEBE existir en la BD),
+recibirás un token que deberás copiar. Y ahora, en cada solicitud posterior,
+agregarás el token en el header:
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5...
+```
+
+Ejemplos de uso en `test/test_reservas.http`
+
+**Notas**:
+
+- Los roles son: 1 Admin, 2 Empleado, 3 Cliente.
+- La contraseña se almacena hasheada con SHA256
+
+### Rutas para testing
+
+Se encuentran en la carpeta `/test`
+
 ### Acceder a la documentación de Swagger
 
 ```bash
@@ -117,4 +165,4 @@ http://localhost:3000/api-docs/
 
 ---
 
-**Facultad de Ciencias de la Administración - UNER** | 2025
+**Facultad de Ciencias de la Administración - UNER | 2025**

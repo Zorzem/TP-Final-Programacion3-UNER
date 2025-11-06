@@ -1,3 +1,4 @@
+# Configurar previamente auth con JWT (leer README.md)
 # Revisar que el número de puerto coincida con el .env
 # Revisar que no haya trailing commas en el JSON :p
 
