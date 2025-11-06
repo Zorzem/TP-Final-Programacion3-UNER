@@ -3,6 +3,7 @@
 import express from "express";
 import ReportesController from "../../controllers/reportesController.js";
 import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
+import verificarToken from '../../middlewares/authJwt.js';
 
 const reportesController = new ReportesController();
 const router = express.Router();
@@ -81,7 +82,7 @@ const router = express.Router();
  *                   example: "Error al generar el reporte"
  */
 
-router.get("/", autorizarUsuarios([1]), reportesController.getReportes);
+router.get("/", verificarToken, autorizarUsuarios([1]), reportesController.getReportes);
 
 
 export default router;

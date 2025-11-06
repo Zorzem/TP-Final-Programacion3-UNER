@@ -1,13 +1,17 @@
 // src/v1/routes/serviciosRoutes.js
 
 import express from "express";
+import { check } from "express-validator";
+import apicache from 'apicache';
+import { validarCampos } from "../../middlewares/validarCampos.js";
 import ServiciosController from "../../controllers/serviciosController.js";
 import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
+import verificarToken from '../../middlewares/authJwt.js';
 
 
 const serviciosController = new ServiciosController();
 const router = express.Router();
-
+let cache = apicache.middleware;
 
 /**
  * @swagger
@@ -187,13 +191,40 @@ const router = express.Router();
  */
 
 
-router.get("/",autorizarUsuarios([1,2,3]), serviciosController.buscarTodos);
-router.get("/:id",autorizarUsuarios([1,2,3]), serviciosController.buscarPorId);
+router.get("/",verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), serviciosController.buscarTodos);
+router.get("/:id",verificarToken, autorizarUsuarios([1,2,3]), serviciosController.buscarPorId);
 
 
-router.post("/",autorizarUsuarios([1,2]), serviciosController.crear);
-router.put("/:id",autorizarUsuarios([1,2]), serviciosController.editar);
-router.delete("/:id",autorizarUsuarios([1,2]), serviciosController.eliminar);
+router.post("/",verificarToken, autorizarUsuarios([1,2]), 
+    [
+        check("descripcion", "La descripción es obligatoria.").notEmpty(),
+        check("importe", "El importe es obligatorio y debe ser numérico.").notEmpty().isFloat(),
+        validarCampos,
+    ],
+    async (req, res, next) => {
+        await serviciosController.crear(req, res, next);
+        cacheClear('/api/v1/servicios');
+    });
+
+router.put("/:id",verificarToken, autorizarUsuarios([1,2]), 
+    [
+        check("descripcion").optional().notEmpty().withMessage("La descripción no puede estar vacía."),
+        check("importe").optional().isFloat().withMessage("El importe debe ser numérico."),
+        check("activo").optional().isBoolean().withMessage("Activo debe ser true o false."),
+        validarCampos,
+    ],
+    async (req, res, next) => {
+        await serviciosController.editar(req, res, next);
+        cacheClear('/api/v1/servicios'); 
+    });
+
+    
+router.delete("/:id",verificarToken, autorizarUsuarios([1,2]), 
+async (req, res, next) => {
+    await serviciosController.eliminar(req, res, next);
+    cacheClear('/api/v1/servicios'); 
+  }
+);
 
 
 export default router;

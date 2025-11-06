@@ -1,13 +1,17 @@
 // src/v1/routes/turnosRoutes.js
 
 import express from "express";
+import apicache from 'apicache';
+import { check } from "express-validator";
+import { validarCampos } from "../../middlewares/validarCampos.js";
 import TurnosController from "../../controllers/turnosController.js";
 import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
+import verificarToken from '../../middlewares/authJwt.js';
 
 
 const turnosController = new TurnosController();
 const router = express.Router();
-
+let cache = apicache.middleware;
 
 /**
  * @swagger
@@ -203,12 +207,53 @@ const router = express.Router();
  */
 
 
-router.get("/",autorizarUsuarios([1,2,3]), turnosController.buscarTodos);
-router.get("/:id",autorizarUsuarios([1,2,3]), turnosController.buscarPorId);
+router.get("/", verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), turnosController.buscarTodos);
+router.get("/:id", verificarToken, autorizarUsuarios([1,2,3]), turnosController.buscarPorId);
 
-router.post("/",autorizarUsuarios([1,2]), turnosController.crear);
-router.put("/:id",autorizarUsuarios([1,2]), turnosController.editar);
-router.delete("/:id",autorizarUsuarios([1,2]), turnosController.eliminar);
+router.post("/", verificarToken, autorizarUsuarios([1,2]), 
+    [
+        check("orden", "El orden es obligatorio y debe ser un número.")
+        .notEmpty()
+        .isInt(),
+        check("hora_desde", "La hora desde es obligatoria y debe tener formato HH:mm.")
+        .notEmpty()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
+        check("hora_hasta", "La hora hasta es obligatoria y debe tener formato HH:mm.")
+        .notEmpty()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
+        validarCampos,
+    ],
+    async (req, res, next) => {
+        await turnosController.crear(req, res, next);
+        cacheClear('/api/v1/turnos');
+    }
+);
+
+router.put("/:id", verificarToken, autorizarUsuarios([1,2]), 
+    [
+        check("orden").optional().isInt().withMessage("El orden debe ser un número."),
+        check("hora_desde")
+        .optional()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+        .withMessage("La hora desde debe tener formato HH:mm."),
+        check("hora_hasta")
+        .optional()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+        .withMessage("La hora hasta debe tener formato HH:mm."),
+        validarCampos,
+    ],
+    async (req, res, next) => {
+        await turnosController.editar(req, res, next);
+        cacheClear('/api/v1/turnos'); 
+    }
+);
+
+
+router.delete("/:id", verificarToken, autorizarUsuarios([1,2]), async (req, res, next) => {
+    await turnosController.eliminar(req, res, next);
+    cacheClear('/api/v1/turnos'); 
+});
+
 
 
 export default router;

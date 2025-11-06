@@ -1,6 +1,7 @@
 // src/v1/routes/reservasRoutes.js
 
 import express from "express";
+import apicache from 'apicache';
 import { check } from "express-validator";
 import { validarCampos } from "../../middlewares/validarCampos.js";
 import autorizarUsuarios from "../../middlewares/autorizarUsuarios.js";
@@ -9,6 +10,7 @@ import multer from "multer";
 import path from "path";
 import fs from 'fs';
 import { fileURLToPath } from "url";
+import verificarToken from '../../middlewares/authJwt.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +26,7 @@ if (!fs.existsSync(uploadDir)) {
 
 const reservasController = new ReservasController();
 const router = express.Router();
+let cache = apicache.middleware;
 
 // Configuración de Multer para subir foto del cumpleañero
 const storage = multer.diskStorage({
@@ -276,11 +279,11 @@ const upload = multer({ storage });
  */
 
 
-router.get('/:reserva_id',  autorizarUsuarios([1,2,3]), reservasController.buscarPorId);
+router.get('/:reserva_id', verificarToken, autorizarUsuarios([1,2,3]), reservasController.buscarPorId);
 
-router.get('/',  autorizarUsuarios([1,2,3]), reservasController.buscarTodos);
+router.get('/', verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), reservasController.buscarTodos);
 
-router.post('/', autorizarUsuarios([1,3]),upload.single("foto_cumpleaniero"),
+router.post('/', verificarToken, autorizarUsuarios([1,3]),upload.single("foto_cumpleaniero"),
     [
         check('fecha_reserva', 'La fecha es necesaria.').notEmpty(),
         check('salon_id', 'El salón es necesario.').notEmpty(),
@@ -294,11 +297,38 @@ router.post('/', autorizarUsuarios([1,3]),upload.single("foto_cumpleaniero"),
         .withMessage('El importe debe ser numérico.'),   
         validarCampos
     ],
-    reservasController.crear);
+    async (req, res, next) => {
+        await reservasController.crear(req, res, next);
+        cacheClear('/api/v1/reservas');
+    }
+);
 
 
-router.put("/:id",  autorizarUsuarios([1]), upload.single("foto_cumpleaniero"), reservasController.editar);
-router.delete("/:id", autorizarUsuarios([1]), reservasController.eliminar);
+router.put("/:id", verificarToken,  autorizarUsuarios([1]), upload.single("foto_cumpleaniero"), 
+    [
+      check('fecha_reserva', 'La fecha es necesaria.').optional().notEmpty(),
+      check('salon_id', 'El salón es necesario.').optional().notEmpty(),
+      check('usuario_id', 'El usuario es necesario.').optional().notEmpty(),
+      check('turno_id', 'El turno es necesario.').optional().notEmpty(),
+      check('servicios', 'Faltan los servicios de la reserva.')
+          .optional()
+          .isArray(),
+      check('servicios.*.importe')
+          .optional()
+          .isFloat()
+          .withMessage('El importe debe ser numérico.'),
+      validarCampos
+    ],
+    async (req, res, next) => {
+        await reservasController.editar(req, res, next);
+        cacheClear('/api/v1/reservas');
+    }
+);
+  
+router.delete("/:id", verificarToken, autorizarUsuarios([1]), async (req, res, next) => {
+    await reservasController.eliminar(req, res, next);
+    cacheClear('/api/v1/reservas');
+});
 
 
 export default router;

@@ -6,6 +6,7 @@ import { swaggerUi, swaggerSpec } from "./config/swagger.js";
 import authRoutes from "./v1/routes/authRoutes.js";
 import encuestasRoutes from "./v1/routes/encuestasRoutes.js";
 import express from "express";
+import cors from "cors";
 import fs from "fs";
 import morgan from "morgan";
 import passport from "passport";
@@ -16,12 +17,13 @@ import serviciosRoutes from "./v1/routes/serviciosRoutes.js";
 import turnosRoutes from "./v1/routes/turnosRoutes.js";
 import usuariosRoutes from "./v1/routes/usuariosRoutes.js";
 
-process.loadEnvFile();
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
 
 // configuracion passport
 passport.use(estrategia);
@@ -80,6 +82,4 @@ app.use((req, res, next) => {
   return errorResponse(res, `Ruta ${req.originalUrl} no encontrada`, 404);
 });
 
-app.listen(process.env.PUERTO, () => {
-  console.log(`Servidor arriba en el puerto ${process.env.PUERTO}`);
-});
+export default app;
