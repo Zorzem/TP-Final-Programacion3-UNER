@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 2rem;
+      }
+      .card {
+        display: inline-block;
+        padding: 1rem 2rem;
+        margin: 1rem;
+        background: #f0f0f0;
+        border-radius: 8px;
+      }
+      .card h2 {
+        margin: 0;
+        font-size: 2rem;
+      }
+      .card p {
+        margin: 0.5rem 0 0;
+        font-size: 1rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Dashboard</h1>
+    <div class="card">
+      <h2 id="usuarios">0</h2>
+      <p>Usuarios</p>
+    </div>
+    <div class="card">
+      <h2 id="reservas">0</h2>
+      <p>Reservas</p>
+    </div>
+    <div class="card">
+      <h2 id="encuestas">0</h2>
+      <p>Encuestas</p>
+    </div>
+
+    <script>
+      fetch("/api/v1/dashboard")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.estado === "Exito") {
+            document.getElementById("usuarios").textContent = data.datos.usuarios;
+            document.getElementById("reservas").textContent = data.datos.reservas;
+            document.getElementById("encuestas").textContent = data.datos.encuestas;
+          } else {
+            console.error("Error al obtener estadísticas:", data.mesaje);
+          }
+        })
+        .catch((err) => console.error(err));
+    </script>
+  </body>
+</html>

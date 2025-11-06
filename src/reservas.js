@@ -1,5 +1,9 @@
 // src/reservas.js
 
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
 import { errorResponse } from "./utils/apiResponse.js";
 import { estrategia, validacion } from "./config/passport.js";
 import { swaggerUi, swaggerSpec } from "./config/swagger.js";
@@ -7,17 +11,23 @@ import authRoutes from "./v1/routes/authRoutes.js";
 import encuestasRoutes from "./v1/routes/encuestasRoutes.js";
 import express from "express";
 import cors from "cors";
-import fs from "fs";
 import morgan from "morgan";
 import passport from "passport";
+
+// rutas
 import reportesRoutes from "./v1/routes/reportesRoutes.js";
 import reservasRoutes from "./v1/routes/reservasRoutes.js";
 import salonesRoutes from "./v1/routes/salonesRoutes.js";
 import serviciosRoutes from "./v1/routes/serviciosRoutes.js";
 import turnosRoutes from "./v1/routes/turnosRoutes.js";
 import usuariosRoutes from "./v1/routes/usuariosRoutes.js";
+import dashboardRoutes from "./v1/routes/dashboardRoutes.js";
 
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/dashboard", express.static(path.join(__dirname, "../public/dashboard")));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -61,6 +71,8 @@ app.use(morgan(formatoPersonalizado)); // log en consola
 app.use(morgan(formatoPersonalizado, { stream: log })); //log en el archivo
 
 // rutas
+// app.use("/dashboard", dashboardRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/auth", authRoutes); // autenticación
 app.use("/api/v1/servicios", serviciosRoutes);
 app.use("/api/v1/salones", salonesRoutes);
