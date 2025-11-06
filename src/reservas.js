@@ -1,4 +1,4 @@
-// src/main.js
+// src/reservas.js
 
 import { errorResponse } from "./utils/apiResponse.js";
 import { estrategia, validacion } from "./config/passport.js";

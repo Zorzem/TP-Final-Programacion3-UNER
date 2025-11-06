@@ -1,3 +1,5 @@
+-- sql/schema.sql
+
 -- Modificado para usar con MySQL vanilla
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 

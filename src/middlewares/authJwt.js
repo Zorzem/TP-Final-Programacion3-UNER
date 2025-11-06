@@ -1,3 +1,5 @@
+// src/middlewares/authJwt.js
+
 import jwt from "jsonwebtoken";
 
 export default function verificarToken(req, res, next) {

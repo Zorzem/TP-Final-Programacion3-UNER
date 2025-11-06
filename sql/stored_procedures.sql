@@ -1,3 +1,5 @@
+-- sql/stored_procedures.sql
+
 -- Procedimientos almacenados para reportes de reservas
 
 DELIMITER //
