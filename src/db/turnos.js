@@ -52,9 +52,8 @@ export default class Turnos {
     return resultado;
   };
 
-  // ✅ Nueva función: verificar existencia del turno
-  static async existeTurno(id) {
+  existeTurno = async (id) => {
     const [rows] = await conexion.execute("SELECT 1 FROM turnos WHERE turno_id = ?", [id]);
     return rows.length > 0;
-  }
+  };
 }

@@ -52,9 +52,8 @@ export default class Salones {
     return resultado;
   };
 
-  // ✅ Nueva función: verificar existencia del salón
-  static async existeSalon(id) {
+  existeSalon = async (id) => {
     const [rows] = await conexion.execute("SELECT 1 FROM salones WHERE salon_id = ?", [id]);
     return rows.length > 0;
-  }
+  };
 }

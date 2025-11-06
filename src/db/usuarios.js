@@ -59,9 +59,8 @@ export default class Usuarios {
     return result;
   };
 
-  // ✅ Nueva función: verificar existencia del usuario
-  static async existeUsuario(id) {
+  existeUsuario = async (id) => {
     const [rows] = await conexion.execute("SELECT 1 FROM usuarios WHERE usuario_id = ?", [id]);
     return rows.length > 0;
-  }
+  };
 }

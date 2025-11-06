@@ -29,17 +29,15 @@ export default class ReservasService {
   crear = async (datos) => {
     const { salon_id, usuario_id, turno_id } = datos;
 
-    // Validar existencia de claves foráneas a través de la capa DB
-    const salonExiste = await Salones.existeSalon(salon_id);
+    const salonExiste = await this.salones.existeSalon(salon_id);
     if (!salonExiste) throw new Error(`El salón con ID ${salon_id} no existe`);
 
-    const usuarioExiste = await Usuarios.existeUsuario(usuario_id);
+    const usuarioExiste = await this.usuarios.existeUsuario(usuario_id);
     if (!usuarioExiste) throw new Error(`El usuario con ID ${usuario_id} no existe`);
 
-    const turnoExiste = await Turnos.existeTurno(turno_id);
+    const turnoExiste = await this.turnos.existeTurno(turno_id);
     if (!turnoExiste) throw new Error(`El turno con ID ${turno_id} no existe`);
 
-    // Si todo existe, crear la reserva
     return this.reservas.crear(datos);
   };
 

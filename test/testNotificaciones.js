@@ -19,13 +19,10 @@ await notificaciones.enviarWhatsapp({
 await notificaciones.enviarNotificacionPush({
   usuarioId: 1,
   titulo: "Reserva confirmada",
-  cuerpo: "Tu reserva fue registrada correctamente.",
+  cuerpo: "Reserva registrada correctamente.",
 });
 
 /**
  * CÓMO EJECUTAR:
- *   Desde la raíz del proyecto, correr el siguiente comando:
- *
- *   node test/testNotificaciones.js
+ *   Desde la raíz del proyecto, ejecutar `node test/testNotificaciones.js`
  */
-
