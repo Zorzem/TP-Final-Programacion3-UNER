@@ -3,16 +3,12 @@
 import { conexion } from "./conexion.js";
 
 export default class Reservas {
-
-
-
-  buscarPropias = async(usuario_id) => {
-    const sql = 'SELECT * FROM reservas WHERE activo = 1 AND usuario_id = ?';
+  buscarPropias = async (usuario_id) => {
+    const sql = "SELECT * FROM reservas WHERE activo = 1 AND usuario_id = ?";
     const [reservas] = await conexion.execute(sql, [usuario_id]);
     return reservas;
-  }
+  };
 
-  
   buscarTodos = async (incluirInactivos = false) => {
     let sql = `
       SELECT 
@@ -230,7 +226,7 @@ export default class Reservas {
         const parsed = JSON.parse(servicios);
         if (Array.isArray(parsed)) return parsed;
       } catch (err) {
-        console.warn("⚠️ Error al parsear 'servicios':", servicios);
+        console.warn("Error al parsear 'servicios':", servicios);
       }
     }
     return [];

@@ -1,13 +1,10 @@
 // src/db/turnos.js
-
 import { conexion } from "./conexion.js";
 
 export default class Turnos {
   buscarTodos = async (incluirInactivos = false) => {
     let sql = "SELECT * FROM turnos";
-    if (!incluirInactivos) {
-      sql += " WHERE activo = 1";
-    }
+    if (!incluirInactivos) sql += " WHERE activo = 1";
     const [turnos] = await conexion.execute(sql);
     return turnos;
   };
@@ -54,4 +51,10 @@ export default class Turnos {
     const [resultado] = await conexion.execute(sql, [id]);
     return resultado;
   };
+
+  // ✅ Nueva función: verificar existencia del turno
+  static async existeTurno(id) {
+    const [rows] = await conexion.execute("SELECT 1 FROM turnos WHERE turno_id = ?", [id]);
+    return rows.length > 0;
+  }
 }

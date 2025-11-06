@@ -17,7 +17,6 @@ import serviciosRoutes from "./v1/routes/serviciosRoutes.js";
 import turnosRoutes from "./v1/routes/turnosRoutes.js";
 import usuariosRoutes from "./v1/routes/usuariosRoutes.js";
 
-
 const app = express();
 
 app.use(express.json());

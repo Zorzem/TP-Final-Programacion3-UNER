@@ -33,7 +33,7 @@ export default class NotificacionesService {
 
     // CORREOS DE LOS ADMINISTRADORES
     const correosAdmin = datosCorreo[1].map((a) => a.correoAdmin);
-     // SEPARO POR COMA PARA AGREGAR A LAS OPCIONES DEL ENVIO
+    // SEPARO POR COMA PARA AGREGAR A LAS OPCIONES DEL ENVIO
     const destinatarios = correosAdmin.join(", ");
 
     const mailOptions = {
@@ -62,9 +62,11 @@ export default class NotificacionesService {
 
   enviarWhatsapp = async (datos) => {
     console.log("Envio WhatsApp:", datos);
-    return true;};
+    return true;
+  };
 
   enviarNotificacionPush = async (datos) => {
     console.log("Envio notificación push:", datos);
-    return true;};
+    return true;
+  };
 }

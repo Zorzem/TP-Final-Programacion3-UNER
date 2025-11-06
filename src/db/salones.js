@@ -1,13 +1,10 @@
 // src/db/salones.js
-
 import { conexion } from "./conexion.js";
 
 export default class Salones {
   buscarTodos = async (incluirInactivos = false) => {
     let sql = "SELECT * FROM salones";
-    if (!incluirInactivos) {
-      sql += " WHERE activo = 1";
-    }
+    if (!incluirInactivos) sql += " WHERE activo = 1";
     const [salones] = await conexion.execute(sql);
     return salones;
   };
@@ -54,4 +51,10 @@ export default class Salones {
     const [resultado] = await conexion.execute(sql, [id]);
     return resultado;
   };
+
+  // ✅ Nueva función: verificar existencia del salón
+  static async existeSalon(id) {
+    const [rows] = await conexion.execute("SELECT 1 FROM salones WHERE salon_id = ?", [id]);
+    return rows.length > 0;
+  }
 }
