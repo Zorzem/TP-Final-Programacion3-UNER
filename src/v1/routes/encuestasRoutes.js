@@ -1,12 +1,17 @@
 // src/v1/routes/encuestasRoutes.js
 
 import express from "express";
+import apicache from 'apicache';
+import { check } from "express-validator";
+import { validarCampos } from "../../middlewares/validarCampos.js";
 import EncuestasController from "../../controllers/encuestasController.js";
 import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
+import verificarToken from '../../middlewares/authJwt.js';
 
 
 const encuestasController = new EncuestasController();
 const router = express.Router();
+let cache = apicache.middleware;
 
 /**
  * @swagger
@@ -193,12 +198,12 @@ const router = express.Router();
  *         description: Encuesta no encontrada
  */
 
-router.get("/", autorizarUsuarios([1]), encuestasController.buscarTodos);
-router.get("/:id", autorizarUsuarios([1]), encuestasController.buscarPorId);
-router.get("/usuario/:usuarioId", autorizarUsuarios([1]), encuestasController.buscarPorUsuario);
-router.get("/salon/:salonId", autorizarUsuarios([1]), encuestasController.buscarPorSalon);
+router.get("/", verificarToken, autorizarUsuarios([1]), cache('5 minutes'), encuestasController.buscarTodos);
+router.get("/:id", verificarToken, autorizarUsuarios([1]), encuestasController.buscarPorId);
+router.get("/usuario/:usuarioId", verificarToken, autorizarUsuarios([1]), encuestasController.buscarPorUsuario);
+router.get("/salon/:salonId", verificarToken, autorizarUsuarios([1]), encuestasController.buscarPorSalon);
 
-router.post("/", autorizarUsuarios([3]), 
+router.post("/", verificarToken, autorizarUsuarios([3]), 
     [
         check("reserva_id", "El ID de la reserva es obligatorio y debe ser un número.")
         .notEmpty()
@@ -209,7 +214,11 @@ router.post("/", autorizarUsuarios([3]),
         check("comentario").optional().isString().withMessage("El comentario debe ser un texto."),
         validarCampos,
     ],
-    encuestasController.crear);
+    async (req, res, next) => {
+        await encuestasController.crear(req, res, next);
+        cacheClear('/api/v1/encuestas'); 
+    }
+);
 
 // Comento el endpoint de edicion y eliminacion ya que no se deberian poder modificar o eliminar las encuestas una vez creadas
 //router.put("/:id", autorizarUsuarios([1]), encuestasController.editar);

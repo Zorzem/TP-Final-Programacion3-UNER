@@ -1,13 +1,17 @@
 // src/v1/routes/turnosRoutes.js
 
 import express from "express";
+import apicache from 'apicache';
+import { check } from "express-validator";
+import { validarCampos } from "../../middlewares/validarCampos.js";
 import TurnosController from "../../controllers/turnosController.js";
 import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
+import verificarToken from '../../middlewares/authJwt.js';
 
 
 const turnosController = new TurnosController();
 const router = express.Router();
-
+let cache = apicache.middleware;
 
 /**
  * @swagger
@@ -203,10 +207,10 @@ const router = express.Router();
  */
 
 
-router.get("/",autorizarUsuarios([1,2,3]), turnosController.buscarTodos);
-router.get("/:id",autorizarUsuarios([1,2,3]), turnosController.buscarPorId);
+router.get("/", verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), turnosController.buscarTodos);
+router.get("/:id", verificarToken, autorizarUsuarios([1,2,3]), turnosController.buscarPorId);
 
-router.post("/",autorizarUsuarios([1,2]), 
+router.post("/", verificarToken, autorizarUsuarios([1,2]), 
     [
         check("orden", "El orden es obligatorio y debe ser un número.")
         .notEmpty()
@@ -219,9 +223,13 @@ router.post("/",autorizarUsuarios([1,2]),
         .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
         validarCampos,
     ],
-    turnosController.crear);
+    async (req, res, next) => {
+        await turnosController.crear(req, res, next);
+        cacheClear('/api/v1/turnos');
+    }
+);
 
-router.put("/:id",autorizarUsuarios([1,2]), 
+router.put("/:id", verificarToken, autorizarUsuarios([1,2]), 
     [
         check("orden").optional().isInt().withMessage("El orden debe ser un número."),
         check("hora_desde")
@@ -234,10 +242,18 @@ router.put("/:id",autorizarUsuarios([1,2]),
         .withMessage("La hora hasta debe tener formato HH:mm."),
         validarCampos,
     ],
-turnosController.editar);
+    async (req, res, next) => {
+        await turnosController.editar(req, res, next);
+        cacheClear('/api/v1/turnos'); 
+    }
+);
 
 
-router.delete("/:id",autorizarUsuarios([1,2]), turnosController.eliminar);
+router.delete("/:id", verificarToken, autorizarUsuarios([1,2]), async (req, res, next) => {
+    await turnosController.eliminar(req, res, next);
+    cacheClear('/api/v1/turnos'); 
+});
+
 
 
 export default router;

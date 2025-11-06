@@ -1,11 +1,15 @@
 // src/v1/routes/usuariosRoutes.js
 import express from "express";
+import apicache from 'apicache';
+import { check } from "express-validator";
+import { validarCampos } from "../../middlewares/validarCampos.js";
 import UsuariosController from "../../controllers/usuariosController.js";
 import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
+import verificarToken from '../../middlewares/authJwt.js';
 
 const router = express.Router();
 const usuariosController = new UsuariosController();
-
+let cache = apicache.middleware;
 
 /**
  * @swagger
@@ -190,10 +194,10 @@ const usuariosController = new UsuariosController();
  */
 
 
-router.get("/",autorizarUsuarios([1]), usuariosController.buscarTodos);
-router.get("/:id",autorizarUsuarios([1]), usuariosController.buscarPorId);
+router.get("/", verificarToken, autorizarUsuarios([1]), cache('5 minutes'), usuariosController.buscarTodos);
+router.get("/:id", verificarToken, autorizarUsuarios([1]), usuariosController.buscarPorId);
 
-router.post("/",autorizarUsuarios([1]), 
+router.post("/", verificarToken, autorizarUsuarios([1]), 
     [
         check("nombre", "El nombre es obligatorio.").notEmpty(),
         check("apellido", "El apellido es obligatorio.").notEmpty(),
@@ -203,9 +207,13 @@ router.post("/",autorizarUsuarios([1]),
         check("celular").optional().isMobilePhone("es-AR").withMessage("El celular no es válido."),
         validarCampos,
     ],
-    usuariosController.crear);
+    async (req, res, next) => {
+        await usuariosController.crear(req, res, next);
+        cacheClear('/api/v1/usuarios'); 
+    }
+);
 
-router.put("/:id",autorizarUsuarios([1]), 
+router.put("/:id", verificarToken, autorizarUsuarios([1]), 
     [
         check("nombre").optional().notEmpty().withMessage("El nombre no puede estar vacío."),
         check("apellido").optional().notEmpty().withMessage("El apellido no puede estar vacío."),
@@ -215,9 +223,16 @@ router.put("/:id",autorizarUsuarios([1]),
         check("celular").optional().isMobilePhone("es-AR").withMessage("El celular no es válido."),
         validarCampos,
     ],
-    usuariosController.editar);
+    async (req, res, next) => {
+        await usuariosController.editar(req, res, next);
+        cacheClear('/api/v1/usuarios');
+    }
+);
 
-router.delete("/:id",autorizarUsuarios([1]), usuariosController.eliminar);
+router.delete("/:id", verificarToken, autorizarUsuarios([1]), async (req, res, next) => {
+    await usuariosController.eliminar(req, res, next);
+    cacheClear('/api/v1/usuarios'); 
+});
 
 
 export default router;
