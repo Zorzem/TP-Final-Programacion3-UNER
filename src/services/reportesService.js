@@ -17,9 +17,16 @@ export default class ReportesService {
     this.reportes = new Reportes();
   }
 
+  // Genera reporte (solo CSV o HTML)
   generarReporte = async (filtros, formato) => {
     const datos = await this.reportes.getReporteReservas(filtros);
 
+    // Si no hay datos, devolver mensaje
+    if (!datos || datos.length === 0) {
+      return Buffer.from("No hay datos disponibles\n", "utf-8");
+    }
+
+    // Solo dos opciones: CSV o HTML (manteniendo lo original)
     if (formato === "csv") {
       return this.generarCSV(datos, filtros);
     }
@@ -28,17 +35,13 @@ export default class ReportesService {
   };
 
   generarCSV = (datos, filtros) => {
-    if (!datos || datos.length === 0) {
-      return "No hay datos disponibles\n";
-    }
-
     const headers = Object.keys(datos[0]).join(",");
     const rows = datos.map((row) =>
       Object.values(row)
         .map((val) => `"${val ?? ""}"`)
         .join(",")
     );
-
+  
     const csv = [headers, ...rows].join("\n");
     return Buffer.from(csv, "utf-8");
   };

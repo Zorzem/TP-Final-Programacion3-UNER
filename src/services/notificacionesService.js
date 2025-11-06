@@ -33,7 +33,7 @@ export default class NotificacionesService {
 
     // CORREOS DE LOS ADMINISTRADORES
     const correosAdmin = datosCorreo[1].map((a) => a.correoAdmin);
-    // SEPARO POR COMA PARA AGREGAR A LAS OPCIONES DEL ENVIO
+     // SEPARO POR COMA PARA AGREGAR A LAS OPCIONES DEL ENVIO
     const destinatarios = correosAdmin.join(", ");
 
     const mailOptions = {
@@ -49,14 +49,22 @@ export default class NotificacionesService {
         console.log(`Error enviado el correo`, error);
         return false;
       }
+      console.log(`Correo enviado correctamente a: ${destinatarios}`);
       return true;
     });
   };
 
   // OTROS TIPOS DE NOTIFICACION
-  enviarMensaje = async (datos) => {};
+  enviarMensaje = async (datos) => {
+    console.log("Envio mensaje:", datos);
+    return true;
+  };
 
-  enviarWhatsapp = async (datos) => {};
+  enviarWhatsapp = async (datos) => {
+    console.log("Envio WhatsApp:", datos);
+    return true;};
 
-  enviarNotificacionPush = async (datos) => {};
+  enviarNotificacionPush = async (datos) => {
+    console.log("Envio notificación push:", datos);
+    return true;};
 }
