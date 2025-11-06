@@ -28,6 +28,7 @@
   </head>
   <body>
     <h1>Dashboard</h1>
+
     <div class="card">
       <h2 id="usuarios">0</h2>
       <p>Usuarios</p>
@@ -40,15 +41,31 @@
       <h2 id="encuestas">0</h2>
       <p>Encuestas</p>
     </div>
+    <div class="card">
+      <h2 id="turnos">0</h2>
+      <p>Turnos</p>
+    </div>
+    <div class="card">
+      <h2 id="servicios">0</h2>
+      <p>Servicios</p>
+    </div>
+    <div class="card">
+      <h2 id="salones">0</h2>
+      <p>Salones</p>
+    </div>
 
     <script>
       fetch("/api/v1/dashboard")
         .then((res) => res.json())
         .then((data) => {
           if (data.estado === "Exito") {
-            document.getElementById("usuarios").textContent = data.datos.usuarios;
-            document.getElementById("reservas").textContent = data.datos.reservas;
-            document.getElementById("encuestas").textContent = data.datos.encuestas;
+            const stats = data.datos;
+            document.getElementById("usuarios").textContent = stats.usuarios;
+            document.getElementById("reservas").textContent = stats.reservas;
+            document.getElementById("encuestas").textContent = stats.encuestas;
+            document.getElementById("turnos").textContent = stats.turnos;
+            document.getElementById("servicios").textContent = stats.servicios;
+            document.getElementById("salones").textContent = stats.salones;
           } else {
             console.error("Error al obtener estadísticas:", data.mesaje);
           }
