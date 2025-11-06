@@ -110,7 +110,8 @@ src
    ```
 
 5. **Configurar la autenticación JWT**\
-   Primero es necesario hacer login y obtener el token, pero para ello necesitamos que el usuario exista  previamente en la BD.
+   Primero es necesario hacer login y obtener el token, pero para ello
+   necesitamos que el usuario exista previamente en la BD.
 
 Podemos crear un usuario de pruebas ejecutando este código en la BD:
 
@@ -162,6 +163,11 @@ Se encuentran en la carpeta `/test`
 ```bash
 http://localhost:3000/api-docs/
 ```
+
+### Funciones extra
+
+- Sistema de encuestas (requiere la tabla `encuestas` en la BD, ver modelo
+  /sql/schema.sql)
 
 ---
 

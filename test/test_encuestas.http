@@ -1,10 +1,11 @@
+# Requiere la tabla `encuestas` (ver modificación del modelo en /sql/schema.sql)
 # Configurar previamente auth con JWT (leer README.md)
 # Revisar que el número de puerto coincida con el .env
 # Revisar que no haya trailing commas en el JSON :p
 
-
 # OBTENER TODAS LAS ENCUESTAS (solo activas)
 GET http://localhost:3000/api/v1/encuestas
+
 
 ###
 
