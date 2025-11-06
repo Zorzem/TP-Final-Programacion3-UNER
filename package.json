@@ -2,10 +2,10 @@
   "name": "app-reservas",
   "version": "1.0.0",
   "description": "TP-Final-Programacion3-UNER",
-  "main": "src/main.js",
+  "main": "src/reservas.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/main.js"
+    "dev": "node --watch src/servidor.js"
   },
   "author": "Grupo AV",
   "license": "ISC",
