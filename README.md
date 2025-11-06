@@ -49,6 +49,7 @@ src
 │   ├── autorizarUsuarios.js  # control de permisos y roles
 │   └── validarCampos.js      # validación de datos entrantes
 ├── services                  # lógica de negocio y reglas de la aplicación
+│   ├── dashboardService.js
 │   ├── encuestasService.js
 │   ├── notificacionesService.js
 │   ├── reportesService.js
@@ -65,6 +66,7 @@ src
 ├── v1
 │   └── routes                # rutas de la API
 │       ├── authRoutes.js
+│       ├── dashboardRoutes.js
 │       ├── encuestasRoutes.js
 │       ├── reportesRoutes.js
 │       ├── reservasRoutes.js
@@ -72,10 +74,11 @@ src
 │       ├── serviciosRoutes.js
 │       ├── turnosRoutes.js
 │       └── usuariosRoutes.js
-├── main.js                   # entrada principal de la app
-├── .env.example              # archivo .env de ejemplo
+├── .env.example              # plantilla de archivo .env de ejemplo
 ├── sql/                      # esquema de la BD y procedimientos almacenados
-└── test/                     # archivos para testear solicitudes HTTP
+├── test/                     # archivos para testear solicitudes HTTP
+├── public/dashboard/         # frontend del dashboard de estadísticas
+└── main.js                   # punto de entrada de la app
 ```
 
 ## Instalación
@@ -167,7 +170,10 @@ http://localhost:3000/api-docs/
 ### Funciones extra
 
 - Sistema de encuestas (requiere la tabla `encuestas` en la BD, ver modelo
-  /sql/schema.sql)
+  `/sql/schema.sql`)
+
+- Dashboard simple de estadísticas globales (no requiere autenticación):
+  http://localhost:3000/dashboard
 
 ---
 
