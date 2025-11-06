@@ -1,6 +1,6 @@
 // src/db/usuarios.js
 import { conexion } from "./conexion.js";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 export default class Usuarios {
   buscar = async (nombre_usuario, contrasenia) => {
