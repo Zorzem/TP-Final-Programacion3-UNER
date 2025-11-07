@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reservas | Dashboard</title>
+    <style>
+      :root {
+        --accent-color: #2d7dffab;
+        --accent-color-hover: #4d9dffc4;
+      }
+
+      html {
+        color-scheme: dark;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 2rem;
+      }
+
+      .header {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+      }
+
+      #clock {
+        /* font-size: 1.2rem; */
+        /* font-weight: 500; */
+        margin-inline: auto 2rem;
+        opacity: 0.5;
+        letter-spacing: 0.5px;
+      }
+      a,
+      a:visited {
+        color: inherit;
+        display: inline-block;
+        margin-top: 10px;
+        opacity: 0.4;
+      }
+
+      a:hover {
+        opacity: 1;
+        color: var(--accent-color-hover);
+      }
+
+      .card {
+        display: inline-block;
+        padding: 1rem 2rem;
+        margin: 0.8rem;
+        background: #ffffff16;
+        border-radius: 8px;
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 2rem;
+      }
+
+      .card p {
+        width: 70px;
+        margin: 0.5rem 0 0;
+        font-size: 1rem;
+      }
+
+      footer {
+        /* position: absolute; */
+        margin-top: 3rem;
+        font-size: 0.9rem;
+      }
+
+      footer p {
+        opacity: 0.4;
+      }
+
+      #copy-btn {
+        background: var(--accent-color);
+        border: none;
+        color: white;
+        padding: 0.6rem 1rem;
+        height: 100%;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      #copy-btn:hover {
+        background: var(--accent-color-hover);
+      }
+
+      #bopy-msg {
+        font-size: 0.8rem;
+        font-weight: 400;
+        font-style: italic;
+        margin-left: -10px;
+        opacity: 0;
+        transition: 0.3s;
+      }
+
+      @media (width < 800px) {
+        .header {
+          flex-direction: column;
+          gap: 0px;
+        }
+        #clock {
+          margin-inline: auto;
+          margin-bottom: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Dashboard</h1>
+      <button id="copy-btn" title="Copiar al portapapeles">Copiar estadísticas</button>
+      <span id="bopy-msg">✓ Copiado al portapapeles</span>
+      <div id="clock"></div>
+    </div>
+
+    <div class="card">
+      <h2 id="usuarios">0</h2>
+      <p>Usuarios</p>
+    </div>
+    <div class="card">
+      <h2 id="reservas">0</h2>
+      <p>Reservas</p>
+    </div>
+    <div class="card">
+      <h2 id="encuestas">0</h2>
+      <p>Encuestas</p>
+    </div>
+    <div class="card">
+      <h2 id="turnos">0</h2>
+      <p>Turnos</p>
+    </div>
+    <div class="card">
+      <h2 id="servicios">0</h2>
+      <p>Servicios</p>
+    </div>
+    <div class="card">
+      <h2 id="salones">0</h2>
+      <p>Salones</p>
+    </div>
+
+    <footer>
+      <a id="docs-link" href="">Ver documentación de la API</a> <br />
+      <a href="https://github.com/Zorzem/TP-Final-Programacion3-UNER">Ver repositorio en Github</a>
+      <p>Facultad de Ciencias de la Administración | UNER | 2025</p>
+    </footer>
+
+    <script>
+      // cargar estadísticas desde el endpoint del backend
+      fetch("/api/v1/dashboard")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.estado === "Exito") {
+            const stats = data.datos;
+            document.querySelector("#usuarios").textContent = stats.usuarios;
+            document.querySelector("#reservas").textContent = stats.reservas;
+            document.querySelector("#encuestas").textContent = stats.encuestas;
+            document.querySelector("#turnos").textContent = stats.turnos;
+            document.querySelector("#servicios").textContent = stats.servicios;
+            document.querySelector("#salones").textContent = stats.salones;
+          } else {
+            console.error("Error al obtener estadísticas:", data.mensaje);
+          }
+        })
+        .catch((err) => console.error(err));
+
+      // url para el enlace de api docs
+      const base = window.location.origin;
+      document.querySelector("#docs-link").href = `${base}/api-docs`;
+
+      // función para formatear fecha y hora en `dd-mm-yyyy hh:mm:ss`
+      function formatearFecha(fecha) {
+        const pad = (n) => n.toString().padStart(2, "0");
+        const d = pad(fecha.getDate());
+        const m = pad(fecha.getMonth() + 1);
+        const y = fecha.getFullYear();
+        const h = pad(fecha.getHours());
+        const min = pad(fecha.getMinutes());
+        const s = pad(fecha.getSeconds());
+        return `${d}-${m}-${y} ${h}:${min}:${s}`;
+      }
+
+      // actualizar reloj
+      function actualizarReloj() {
+        const ahora = new Date();
+        document.querySelector("#clock").textContent = formatearFecha(ahora);
+      }
+
+      setInterval(actualizarReloj, 1000);
+      actualizarReloj();
+
+      // copiar estadísticas al portapapeles
+      document.querySelector("#copy-btn").addEventListener("click", () => {
+        const stats = {
+          Usuarios: document.querySelector("#usuarios").textContent,
+          Reservas: document.querySelector("#reservas").textContent,
+          Encuestas: document.querySelector("#encuestas").textContent,
+          Turnos: document.querySelector("#turnos").textContent,
+          Servicios: document.querySelector("#servicios").textContent,
+          Salones: document.querySelector("#salones").textContent,
+        };
+
+        const ahora = new Date();
+        const timestamp = formatearFecha(ahora);
+
+        // preparar string final
+        const text =
+          `(${timestamp})\n` +
+          Object.entries(stats)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("\n");
+
+        // copiar al portapapeles
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            const msg = document.querySelector("#bopy-msg");
+            msg.style.opacity = 1;
+            setTimeout(() => (msg.style.opacity = 0), 1500);
+          })
+          .catch((err) => console.error("Error al copiar:", err));
+      });
+    </script>
+  </body>
+</html>

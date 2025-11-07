@@ -1,3 +1,5 @@
+// src/controllers/reportesController.js
+
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
 import ReportesService from "../services/reportesService.js";
 
@@ -45,8 +47,7 @@ export default class ReportesController {
    */
   getReportes = async (req, res) => {
     try {
-      const { fechaInicio, fechaFin, formato = "pdf", tipo = "stats" } =
-        req.query;
+      const { fechaInicio, fechaFin, formato = "pdf", tipo = "stats" } = req.query;
 
       const filtros = {
         fechaInicio,
@@ -54,10 +55,7 @@ export default class ReportesController {
         tipo,
       };
 
-      const contenido = await this.reportesService.generarReporte(
-        filtros,
-        formato
-      );
+      const contenido = await this.reportesService.generarReporte(filtros, formato);
 
       if (formato === "csv") {
         res.setHeader("Content-Type", "text/csv");
@@ -76,4 +74,3 @@ export default class ReportesController {
     }
   };
 }
-

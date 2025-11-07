@@ -1,3 +1,5 @@
+// src/services/reportesService.js
+
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -15,8 +17,13 @@ export default class ReportesService {
     this.reportes = new Reportes();
   }
 
+  // genera reporte (solo CSV o HTML)
   generarReporte = async (filtros, formato) => {
     const datos = await this.reportes.getReporteReservas(filtros);
+
+    if (!datos || datos.length === 0) {
+      return Buffer.from("No hay datos disponibles\n", "utf-8");
+    }
 
     if (formato === "csv") {
       return this.generarCSV(datos, filtros);
@@ -26,10 +33,6 @@ export default class ReportesService {
   };
 
   generarCSV = (datos, filtros) => {
-    if (!datos || datos.length === 0) {
-      return "No hay datos disponibles\n";
-    }
-
     const headers = Object.keys(datos[0]).join(",");
     const rows = datos.map((row) =>
       Object.values(row)
@@ -42,10 +45,7 @@ export default class ReportesService {
   };
 
   generarHTML = (datos, filtros) => {
-    const plantillaPath = path.join(
-      __dirname,
-      "../utils/handlebars/reporte.hbs"
-    );
+    const plantillaPath = path.join(__dirname, "../utils/handlebars/reporte.hbs");
     let template;
 
     try {
@@ -54,9 +54,9 @@ export default class ReportesService {
     } catch (error) {
       template = handlebars.compile(`
         <html>
-          <head><title>Reporte de Reservas</title></head>
+          <head><title>Reporte de reservas</title></head>
           <body>
-            <h1>Reporte de Reservas</h1>
+            <h1>Reporte de reservas</h1>
             <p>Periodo: {{fechaInicio}} - {{fechaFin}}</p>
             <pre>{{json datos}}</pre>
           </body>
@@ -74,4 +74,3 @@ export default class ReportesService {
     return Buffer.from(html, "utf-8");
   };
 }
-

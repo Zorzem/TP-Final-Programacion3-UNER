@@ -1,13 +1,259 @@
+// src/v1/routes/turnosRoutes.js
+
 import express from "express";
+import apicache from 'apicache';
+import { check } from "express-validator";
+import { validarCampos } from "../../middlewares/validarCampos.js";
 import TurnosController from "../../controllers/turnosController.js";
+import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
+import verificarToken from '../../middlewares/authJwt.js';
+
 
 const turnosController = new TurnosController();
 const router = express.Router();
+let cache = apicache.middleware;
 
-router.get("/", turnosController.buscarTodos);
-router.get("/:id", turnosController.buscarPorId);
-router.post("/", turnosController.crear);
-router.put("/:id", turnosController.editar);
-router.delete("/:id", turnosController.eliminar);
+/**
+ * @swagger
+ * tags:
+ *   name: Turnos
+ *   description: Gestión de turnos disponibles y sus horarios
+ */
+
+/**
+ * @swagger
+ * /turnos:
+ *   get:
+ *     summary: Obtiene la lista completa de turnos
+ *     tags: [Turnos]
+ *     parameters:
+ *       - in: query
+ *         name: incluirInactivos
+ *         schema:
+ *           type: boolean
+ *         description: Incluir turnos inactivos en la respuesta
+ *         example: false
+ *     responses:
+ *       200:
+ *         description: Lista de turnos encontrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 estado:
+ *                   type: boolean
+ *                   example: true
+ *                 datos:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       turno_id:
+ *                         type: integer
+ *                         example: 1
+ *                       orden:
+ *                         type: integer
+ *                         example: 1
+ *                       hora_desde:
+ *                         type: string
+ *                         example: "10:00:00"
+ *                       hora_hasta:
+ *                         type: string
+ *                         example: "12:00:00"
+ *                       activo:
+ *                         type: boolean
+ *                         example: true
+ */
+
+/**
+ * @swagger
+ * /turnos/{id}:
+ *   get:
+ *     summary: Busca un turno por su ID
+ *     tags: [Turnos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del turno
+ *     responses:
+ *       200:
+ *         description: Turno encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 estado:
+ *                   type: boolean
+ *                   example: true
+ *                 datos:
+ *                   type: object
+ *                   properties:
+ *                     turno_id:
+ *                       type: integer
+ *                       example: 2
+ *                     orden:
+ *                       type: integer
+ *                       example: 2
+ *                     hora_desde:
+ *                       type: string
+ *                       example: "14:00:00"
+ *                     hora_hasta:
+ *                       type: string
+ *                       example: "16:00:00"
+ *                     activo:
+ *                       type: boolean
+ *                       example: true
+ *       404:
+ *         description: Turno no encontrado
+ */
+
+/**
+ * @swagger
+ * /turnos:
+ *   post:
+ *     summary: Crea un nuevo turno
+ *     tags: [Turnos]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - orden
+ *               - hora_desde
+ *               - hora_hasta
+ *             properties:
+ *               orden:
+ *                 type: integer
+ *                 example: 3
+ *               hora_desde:
+ *                 type: string
+ *                 example: "18:00:00"
+ *               hora_hasta:
+ *                 type: string
+ *                 example: "20:00:00"
+ *     responses:
+ *       201:
+ *         description: Turno creado exitosamente
+ *       400:
+ *         description: Datos inválidos
+ */
+
+/**
+ * @swagger
+ * /turnos/{id}:
+ *   put:
+ *     summary: Edita un turno existente
+ *     tags: [Turnos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del turno
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               orden:
+ *                 type: integer
+ *                 example: 1
+ *               hora_desde:
+ *                 type: string
+ *                 example: "09:00:00"
+ *               hora_hasta:
+ *                 type: string
+ *                 example: "11:00:00"
+ *               activo:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Turno actualizado correctamente
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Turno no encontrado
+ */
+
+/**
+ * @swagger
+ * /turnos/{id}:
+ *   delete:
+ *     summary: Desactiva un turno
+ *     tags: [Turnos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del turno a desactivar
+ *     responses:
+ *       200:
+ *         description: Turno desactivado correctamente
+ *       404:
+ *         description: Turno no encontrado
+ */
+
+
+router.get("/", verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), turnosController.buscarTodos);
+router.get("/:id", verificarToken, autorizarUsuarios([1,2,3]), turnosController.buscarPorId);
+
+router.post("/", verificarToken, autorizarUsuarios([1,2]), 
+    [
+        check("orden", "El orden es obligatorio y debe ser un número.")
+        .notEmpty()
+        .isInt(),
+        check("hora_desde", "La hora desde es obligatoria y debe tener formato HH:mm.")
+        .notEmpty()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
+        check("hora_hasta", "La hora hasta es obligatoria y debe tener formato HH:mm.")
+        .notEmpty()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
+        validarCampos,
+    ],
+    async (req, res, next) => {
+        await turnosController.crear(req, res, next);
+        cacheClear('/api/v1/turnos');
+    }
+);
+
+router.put("/:id", verificarToken, autorizarUsuarios([1,2]), 
+    [
+        check("orden").optional().isInt().withMessage("El orden debe ser un número."),
+        check("hora_desde")
+        .optional()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+        .withMessage("La hora desde debe tener formato HH:mm."),
+        check("hora_hasta")
+        .optional()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+        .withMessage("La hora hasta debe tener formato HH:mm."),
+        validarCampos,
+    ],
+    async (req, res, next) => {
+        await turnosController.editar(req, res, next);
+        cacheClear('/api/v1/turnos'); 
+    }
+);
+
+
+router.delete("/:id", verificarToken, autorizarUsuarios([1,2]), async (req, res, next) => {
+    await turnosController.eliminar(req, res, next);
+    cacheClear('/api/v1/turnos'); 
+});
+
+
 
 export default router;

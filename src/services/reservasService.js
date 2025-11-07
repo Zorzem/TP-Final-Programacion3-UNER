@@ -1,13 +1,25 @@
-import { conexion } from "../db/conexion.js";
+// src/services/reservasService.js
 import Reservas from "../db/reservas.js";
+import Salones from "../db/salones.js";
+import Usuarios from "../db/usuarios.js";
+import Turnos from "../db/turnos.js";
+import NotificacionesService from "./notificacionesService.js";
 
 export default class ReservasService {
   constructor() {
     this.reservas = new Reservas();
+    this.salones = new Salones();
+    this.usuarios = new Usuarios();
+    this.turnos = new Turnos();
+    this.notificacionesService = new NotificacionesService();
   }
 
-  buscarTodos = (incluirInactivos = false) => {
-    return this.reservas.buscarTodos(incluirInactivos);
+  buscarTodos = (usuario) => {
+    if (usuario.tipo_usuario < 3) {
+      return this.reservas.buscarTodos();
+    } else {
+      return this.reservas.buscarPropias(usuario.usuario_id);
+    }
   };
 
   buscarPorId = async (id) => {
@@ -17,27 +29,37 @@ export default class ReservasService {
   crear = async (datos) => {
     const { salon_id, usuario_id, turno_id } = datos;
 
-    // validar existencia de claves foráneas antes de crear la reserva
-    const [salonExiste] = await conexion.execute("SELECT 1 FROM salones WHERE salon_id = ?", [salon_id]);
-    if (salonExiste.length === 0) {
-      console.log(`El salón con ID ${salon_id} no existe`);
-      throw new Error(`El salón con ID ${salon_id} no existe`);
-    }
+    const salonExiste = await this.salones.existeSalon(salon_id);
+    if (!salonExiste) throw new Error(`El salón con ID ${salon_id} no existe`);
 
-    const [usuarioExiste] = await conexion.execute("SELECT 1 FROM usuarios WHERE usuario_id = ?", [usuario_id]);
-    if (usuarioExiste.length === 0) {
-      console.log(`El usuario con ID ${usuario_id} no existe`);
-      throw new Error(`El usuario con ID ${usuario_id} no existe`);
-    }
+    const usuarioExiste = await this.usuarios.existeUsuario(usuario_id);
+    if (!usuarioExiste) throw new Error(`El usuario con ID ${usuario_id} no existe`);
 
-    const [turnoExiste] = await conexion.execute("SELECT 1 FROM turnos WHERE turno_id = ?", [turno_id]);
-    if (turnoExiste.length === 0) {
-      console.log(`El turno con ID ${turno_id} no existe`);
-      throw new Error(`El turno con ID ${turno_id} no existe`);
-    }
+    const turnoExiste = await this.turnos.existeTurno(turno_id);
+    if (!turnoExiste) throw new Error(`El turno con ID ${turno_id} no existe`);
 
-    // Si todo existe, proceder a crear la reserva
-    return this.reservas.crear(datos);
+    // Crea la reserva
+    const nuevoId = await this.reservas.crear(datos);
+
+    // Obtiene datos completos de la reserva creada
+    const reserva = await this.reservas.buscarPorId(nuevoId);
+
+    // Obtiene correo del usuario (buscando en la BD)
+    const usuario = await this.usuarios.buscarPorId(usuario_id);
+    const correoUsuario = usuario?.nombre_usuario || usuario?.correo || "sincorreo@ejemplo.com";
+
+    // Define correo del administrador
+    const correoAdmin = process.env.CORREO;
+
+    // Envia correo de confirmación
+    await this.notificacionesService.enviarCorreoReserva({
+      correoUsuario,
+      correoAdmin,
+      datosReserva: reserva,
+    });
+
+    // Devuelve ID de la nueva reserva
+    return nuevoId;
   };
 
   editar = async (id, datos) => {

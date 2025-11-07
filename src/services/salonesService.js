@@ -1,3 +1,5 @@
+// src/services/salonesService.js
+
 import Salones from "../db/salones.js";
 
 export default class SalonesService {
