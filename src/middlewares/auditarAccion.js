@@ -2,6 +2,12 @@
 
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const projectRoot = path.resolve(__dirname, "..", "..");
 
 export default function auditarAccion(recurso) {
   return (req, res, next) => {
@@ -34,11 +40,12 @@ export default function auditarAccion(recurso) {
 
     // Guardar en archivo
     try {
-      const logsDir = path.resolve("./logs");
+      const logsDir = path.join(projectRoot, "logs");
       const logFile = path.join(logsDir, "auditoria.log");
 
       if (!fs.existsSync(logsDir)) {
         fs.mkdirSync(logsDir, { recursive: true });
+        console.log(`Directorio de logs creado: ${logsDir}`);
       }
 
       fs.appendFileSync(logFile, mensajeAuditoria, "utf8");

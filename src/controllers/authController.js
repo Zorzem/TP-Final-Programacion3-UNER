@@ -6,7 +6,12 @@ import fs from "fs";
 import path from "path";
 
 //ruta del archivo de logs dentro de src/logs/
-const LOG_PATH = path.join(process.cwd(), "logs", "auditoria.log");
+const LOGS_DIR = path.join(process.cwd(), "logs");
+const LOG_PATH = path.join(LOGS_DIR, "auditoria.log");
+
+if (!fs.existsSync(LOGS_DIR)) {
+  fs.mkdirSync(LOGS_DIR, { recursive: true });
+}
 
 export default class AuthController {
   login = async (req, res) => {

@@ -216,7 +216,7 @@ router.post("/", verificarToken, autorizarUsuarios([3]),
     ],
     async (req, res, next) => {
         await encuestasController.crear(req, res, next);
-        cacheClear('/api/v1/encuestas'); 
+        apicache.clear("/api/v1/usuarios"); 
     }
 );
 
