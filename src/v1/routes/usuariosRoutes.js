@@ -6,7 +6,7 @@ import { validarCampos } from "../../middlewares/validarCampos.js";
 import UsuariosController from "../../controllers/usuariosController.js";
 import autorizarUsuarios from "../../middlewares/autorizarUsuarios.js";
 import verificarToken from "../../middlewares/authJwt.js";
-import auditarAccion from "../../middlewares/auditarAccion.js";  
+import auditarAccion from "../../middlewares/auditarAccion.js";
 
 const router = express.Router();
 const usuariosController = new UsuariosController();
@@ -194,6 +194,41 @@ const cache = apicache.middleware;
  *         description: Usuario no encontrado
  */
 
+/**
+ * @swagger
+ * /usuarios/reset-password:
+ *   post:
+ *     summary: Restablece la contraseña de un usuario
+ *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nombre_usuario
+ *               - nueva_contrasenia
+ *             properties:
+ *               nombre_usuario:
+ *                 type: string
+ *                 example: "usuario@example.com"
+ *               nueva_contrasenia:
+ *                 type: string
+ *                 example: "nueva1234"
+ *     responses:
+ *       200:
+ *         description: Contraseña restablecida correctamente
+ *       400:
+ *         description: Faltan datos obligatorios
+ *       404:
+ *         description: Usuario no encontrado
+ *       401:
+ *         description: No autorizado
+ */
+
 router.get("/", verificarToken, autorizarUsuarios([1]), cache("5 minutes"), usuariosController.buscarTodos);
 router.get("/:id", verificarToken, autorizarUsuarios([1]), usuariosController.buscarPorId);
 
@@ -237,9 +272,25 @@ router.put(
   }
 );
 
-router.delete("/:id", verificarToken, autorizarUsuarios([1]),auditarAccion("Eliminar Usuario"), async (req, res, next) => {
-  await usuariosController.eliminar(req, res, next);
-  apicache.clear("/api/v1/usuarios");
-});
+router.delete(
+  "/:id",
+  verificarToken,
+  autorizarUsuarios([1]),
+  auditarAccion("Eliminar Usuario"),
+  async (req, res, next) => {
+    await usuariosController.eliminar(req, res, next);
+    apicache.clear("/api/v1/usuarios");
+  }
+);
+
+router.post(
+  "/reset-password",
+  verificarToken,
+  autorizarUsuarios([1]), // solo admins
+  auditarAccion("Restablecer Contraseña"),
+  async (req, res, next) => {
+    await usuariosController.restablecerContrasenia(req, res, next);
+  }
+);
 
 export default router;

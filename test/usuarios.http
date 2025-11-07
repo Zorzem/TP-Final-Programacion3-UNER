@@ -46,3 +46,13 @@ Content-Type: application/json
 ###
 # ELIMINAR UN USUARIO
 DELETE http://localhost:3000/api/v1/usuarios/1
+
+
+###
+# RESTABLECER CONTRASEÑA DE UN USUARIO
+POST http://localhost:3000/api/v1/usuarios/reset-password
+Content-Type: application/json
+{
+  "nombre_usuario": "pamgom@correo.com",
+  "nueva_contrasenia": "pass1234"
+}

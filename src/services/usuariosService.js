@@ -15,4 +15,8 @@ export default class UsuariosService {
   crear = (datos) => this.usuarios.crear(datos);
   editar = (id, datos) => this.usuarios.editar(id, datos);
   eliminar = (id) => this.usuarios.eliminar(id);
+
+  restablecerContrasenia = (nombre_usuario, nuevaContrasenia) => {
+    return this.usuarios.actualizarContrasenia(nombre_usuario, nuevaContrasenia);
+  };
 }
