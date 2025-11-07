@@ -30,7 +30,6 @@ export default class Usuarios {
     return result[0];
   };
 
-
   buscarTodos = async () => {
     const [rows] = await conexion.execute("SELECT * FROM usuarios");
     return rows;
@@ -72,5 +71,14 @@ export default class Usuarios {
   existeUsuario = async (id) => {
     const [rows] = await conexion.execute("SELECT 1 FROM usuarios WHERE usuario_id = ?", [id]);
     return rows.length > 0;
+  };
+
+  actualizarContrasenia = async (nombre_usuario, nuevaContrasenia) => {
+    const hashContrasenia = crypto.createHash("sha256").update(nuevaContrasenia).digest("hex");
+    const [result] = await conexion.execute(
+      `UPDATE usuarios SET contrasenia = ?, modificado = NOW() WHERE nombre_usuario = ?`,
+      [hashContrasenia, nombre_usuario]
+    );
+    return result.affectedRows; // devuelve 0 si no existe el usuario
   };
 }

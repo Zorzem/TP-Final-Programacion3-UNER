@@ -135,4 +135,24 @@ export default class UsuariosController {
       return errorResponse(res);
     }
   };
+
+  restablecerContrasenia = async (req, res) => {
+    try {
+      const { nombre_usuario, nueva_contrasenia } = req.body;
+      // console.log(nombre_usuario);
+      if (!nombre_usuario || !nueva_contrasenia) {
+        return errorResponse(res, "Requiere 'nombre_usuario' y 'nueva_contrasenia'", 400);
+      }
+
+      const resultado = await this.usuariosService.restablecerContrasenia(nombre_usuario, nueva_contrasenia);
+      if (resultado === 0) {
+        return notFoundResponse(res, `Usuario '${nombre_usuario}' no encontrado`);
+      }
+
+      return successResponse(res, null, `Contraseña de '${nombre_usuario}' restablecida correctamente`);
+    } catch (error) {
+      console.log("Error en POST /usuarios/reset-password", error);
+      return errorResponse(res);
+    }
+  };
 }

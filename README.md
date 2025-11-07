@@ -154,7 +154,7 @@ agregarás el token en el header:
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5...
 ```
 
-Ejemplos de uso en `test/test_reservas.http`
+Ejemplos de uso en `test/reservas.http`
 
 **Notas**:
 
@@ -181,6 +181,8 @@ http://localhost:3000/api-docs/
 
 - Carpeta `/logs` con archivo `auditoria.log` donde se resguarda el historial de
   las acciones basicas. (si no existe se crea al momento de guardar información)
+
+- Reinicio de contraseñas de usuarios (ejemplo de uso en `/test/usuarios.http`)
 
 ---
 
