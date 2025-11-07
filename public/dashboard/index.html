@@ -129,7 +129,7 @@
     </footer>
 
     <script>
-      // cargar estadísticas
+      // cargar estadísticas al endpoint del backend
       fetch("/api/v1/dashboard")
         .then((res) => res.json())
         .then((data) => {
@@ -147,7 +147,7 @@
         })
         .catch((err) => console.error(err));
 
-      // url de api docs
+      // url para el link de api docs
       const base = window.location.origin;
       document.querySelector("#docs-link").href = `${base}/api-docs`;
 
@@ -163,10 +163,12 @@
         };
         // console.dir(stats);
 
+        // preparar string
         const text = Object.entries(stats)
           .map(([k, v]) => `${k}: ${v}`)
           .join("\n");
 
+        // copiar al portapapeles
         navigator.clipboard
           .writeText(text)
           .then(() => {

@@ -1,23 +1,27 @@
 // src/services/dashboardService.js
-import { conexion } from "../db/conexion.js";
+
+import {
+  contarUsuarios,
+  contarReservas,
+  contarEncuestas,
+  contarTurnos,
+  contarServicios,
+  contarSalones,
+} from "../db/dashboard.js";
 
 export const obtenerEstadisticas = async () => {
   try {
-    const [usuarios] = await conexion.query("SELECT COUNT(*) AS total FROM usuarios");
-    const [reservas] = await conexion.query("SELECT COUNT(*) AS total FROM reservas");
-    const [encuestas] = await conexion.query("SELECT COUNT(*) AS total FROM encuestas");
-    const [turnos] = await conexion.query("SELECT COUNT(*) AS total FROM turnos");
-    const [servicios] = await conexion.query("SELECT COUNT(*) AS total FROM servicios");
-    const [salones] = await conexion.query("SELECT COUNT(*) AS total FROM salones");
+    // ejecuta todas las tareas en paralelo
+    const [usuarios, reservas, encuestas, turnos, servicios, salones] = await Promise.all([
+      contarUsuarios(),
+      contarReservas(),
+      contarEncuestas(),
+      contarTurnos(),
+      contarServicios(),
+      contarSalones(),
+    ]);
 
-    return {
-      usuarios: usuarios[0].total,
-      reservas: reservas[0].total,
-      encuestas: encuestas[0].total,
-      turnos: turnos[0].total,
-      servicios: servicios[0].total,
-      salones: salones[0].total,
-    };
+    return { usuarios, reservas, encuestas, turnos, servicios, salones };
   } catch (err) {
     console.error(err);
     throw err;
