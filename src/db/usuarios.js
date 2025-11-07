@@ -13,13 +13,23 @@ export default class Usuarios {
     return result[0];
   };
 
+  // src/db/usuarios.js
   buscarPorId = async (usuario_id) => {
-    const sql = `SELECT CONCAT(u.nombre, ' ', u.apellido) as usuario, u.tipo_usuario, u.usuario_id
-                 FROM usuarios AS u
-                 WHERE u.usuario_id = ? AND u.activo = 1;`;
+    const sql = `
+      SELECT 
+        u.usuario_id,
+        u.nombre_usuario,
+        CONCAT(u.nombre, ' ', u.apellido) AS usuario,
+        u.tipo_usuario
+      FROM usuarios AS u
+      WHERE u.usuario_id = ? 
+        AND u.activo = 1;
+    `;
+
     const [result] = await conexion.query(sql, [usuario_id]);
     return result[0];
   };
+
 
   buscarTodos = async () => {
     const [rows] = await conexion.execute("SELECT * FROM usuarios");

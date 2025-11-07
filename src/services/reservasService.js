@@ -38,7 +38,28 @@ export default class ReservasService {
     const turnoExiste = await this.turnos.existeTurno(turno_id);
     if (!turnoExiste) throw new Error(`El turno con ID ${turno_id} no existe`);
 
-    return this.reservas.crear(datos);
+    // Crea la reserva
+    const nuevoId = await this.reservas.crear(datos);
+
+    // Obtiene datos completos de la reserva creada
+    const reserva = await this.reservas.buscarPorId(nuevoId);
+
+    // Obtiene correo del usuario (buscando en la BD)
+    const usuario = await this.usuarios.buscarPorId(usuario_id);
+    const correoUsuario = usuario?.nombre_usuario || usuario?.correo || "sincorreo@ejemplo.com";
+
+    // Define correo del administrador
+    const correoAdmin = process.env.CORREO;
+
+    // Envia correo de confirmación
+    await this.notificacionesService.enviarCorreoReserva({
+      correoUsuario,
+      correoAdmin,
+      datosReserva: reserva,
+    });
+
+    // Devuelve ID de la nueva reserva
+    return nuevoId;
   };
 
   editar = async (id, datos) => {

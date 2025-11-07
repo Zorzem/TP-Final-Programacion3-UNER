@@ -56,71 +56,79 @@ export default class ReservasController {
   };
 
   crear = async (req, res) => {
-    try {
-      let { fecha_reserva, salon_id, usuario_id, turno_id, tematica, importe_salon, servicios } = req.body;
+  try {
+    let { fecha_reserva, salon_id, usuario_id, turno_id, tematica, importe_salon, servicios } = req.body;
 
-      const faltantes = [];
-      if (!fecha_reserva) faltantes.push("fecha_reserva");
-      if (!salon_id) faltantes.push("salon_id");
-      if (!usuario_id) faltantes.push("usuario_id");
-      if (!turno_id) faltantes.push("turno_id");
-      if (faltantes.length > 0) {
-        return errorResponse(res, `Faltan datos obligatorios: ${faltantes.join(", ")}`, 400);
-      }
-
-      const formatoValido = /^\d{4}-\d{2}-\d{2}$/;
-      if (!formatoValido.test(fecha_reserva)) {
-        return errorResponse(res, "Formato de fecha inválido, usá YYYY-MM-DD", 400);
-      }
-      const [y, m, d] = fecha_reserva.split("-").map(Number);
-      const fechaTest = new Date(fecha_reserva + "T00:00:00Z");
-      if (
-        Number.isNaN(fechaTest.getTime()) ||
-        fechaTest.getUTCFullYear() !== y ||
-        fechaTest.getUTCMonth() + 1 !== m ||
-        fechaTest.getUTCDate() !== d
-      ) {
-        return errorResponse(res, "Fecha inválida", 400);
-      }
-
-      salon_id = Number(salon_id);
-      usuario_id = Number(usuario_id);
-      turno_id = Number(turno_id);
-      if ([salon_id, usuario_id, turno_id].some((n) => !Number.isInteger(n))) {
-        return errorResponse(res, "IDs inválidos (deben ser enteros)", 400);
-      }
-
-      const foto_cumpleaniero = req.file ? req.file.filename : null;
-
-      let serviciosProcesados = [];
-      if (typeof servicios === "string" && servicios.trim() !== "") {
-        try {
-          const parsed = JSON.parse(servicios);
-          if (Array.isArray(parsed)) serviciosProcesados = parsed;
-        } catch (e) {
-          console.warn("No se pudo parsear 'servicios':", servicios);
-        }
-      } else if (Array.isArray(servicios)) {
-        serviciosProcesados = servicios;
-      }
-
-      const nuevoId = await this.reservasService.crear({
-        fecha_reserva,
-        salon_id,
-        usuario_id,
-        turno_id,
-        foto_cumpleaniero,
-        tematica: tematica ?? null,
-        importe_salon: importe_salon ?? null,
-        servicios: serviciosProcesados,
-      });
-
-      return successResponse(res, { id: nuevoId }, "Reserva creada con éxito", 201);
-    } catch (error) {
-      console.error("Error en POST /reservas:", error);
-      return errorResponse(res, error.message, 500);
+    const faltantes = [];
+    if (!fecha_reserva) faltantes.push("fecha_reserva");
+    if (!salon_id) faltantes.push("salon_id");
+    if (!usuario_id) faltantes.push("usuario_id");
+    if (!turno_id) faltantes.push("turno_id");
+    if (faltantes.length > 0) {
+      return errorResponse(res, `Faltan datos obligatorios: ${faltantes.join(", ")}`, 400);
     }
-  };
+
+    const formatoValido = /^\d{4}-\d{2}-\d{2}$/;
+    if (!formatoValido.test(fecha_reserva)) {
+      return errorResponse(res, "Formato de fecha inválido, usá YYYY-MM-DD", 400);
+    }
+
+    const [y, m, d] = fecha_reserva.split("-").map(Number);
+    const fechaTest = new Date(fecha_reserva + "T00:00:00Z");
+    if (
+      Number.isNaN(fechaTest.getTime()) ||
+      fechaTest.getUTCFullYear() !== y ||
+      fechaTest.getUTCMonth() + 1 !== m ||
+      fechaTest.getUTCDate() !== d
+    ) {
+      return errorResponse(res, "Fecha inválida", 400);
+    }
+
+    salon_id = Number(salon_id);
+    usuario_id = Number(usuario_id);
+    turno_id = Number(turno_id);
+    if ([salon_id, usuario_id, turno_id].some((n) => !Number.isInteger(n))) {
+      return errorResponse(res, "IDs inválidos (deben ser enteros)", 400);
+    }
+
+    const foto_cumpleaniero = req.file ? req.file.filename : null;
+
+    let serviciosProcesados = [];
+    if (typeof servicios === "string" && servicios.trim() !== "") {
+      try {
+        const parsed = JSON.parse(servicios);
+        if (Array.isArray(parsed)) serviciosProcesados = parsed;
+      } catch (e) {
+        console.warn("No se pudo parsear 'servicios':", servicios);
+      }
+    } else if (Array.isArray(servicios)) {
+      serviciosProcesados = servicios;
+    }
+
+    // Crear la reserva 
+    const nuevoId = await this.reservasService.crear({
+      fecha_reserva,
+      salon_id,
+      usuario_id,
+      turno_id,
+      foto_cumpleaniero,
+      tematica: tematica ?? null,
+      importe_salon: importe_salon ?? null,
+      servicios: serviciosProcesados,
+    });
+
+    return successResponse(
+      res,
+      { id: nuevoId },
+      "Reserva creada con éxito — Se envió correo de confirmación al usuario y al administrador.",
+      201
+    );
+  } catch (error) {
+    console.error("Error en POST /reservas:", error);
+    return errorResponse(res, error.message, 500);
+  }
+};
+
 
   editar = async (req, res) => {
     try {

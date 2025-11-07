@@ -12,6 +12,10 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import verificarToken from "../../middlewares/authJwt.js";
 
+
+
+const cache = apicache.middleware;
+const cacheClear = (route) => apicache.clear(route);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -24,7 +28,6 @@ if (!fs.existsSync(uploadDir)) {
 
 const reservasController = new ReservasController();
 const router = express.Router();
-let cache = apicache.middleware;
 
 // Configuración de Multer para subir foto del cumpleañero
 const storage = multer.diskStorage({
@@ -275,7 +278,7 @@ const upload = multer({ storage });
  *         description: Reserva no encontrada
  */
 
-router.get("/:reserva_id", verificarToken, autorizarUsuarios([1, 2, 3]), reservasController.buscarPorId);
+router.get("/:id", verificarToken, autorizarUsuarios([1, 2, 3]), reservasController.buscarPorId);
 
 router.get("/", verificarToken, autorizarUsuarios([1, 2, 3]), cache("5 minutes"), reservasController.buscarTodos);
 
