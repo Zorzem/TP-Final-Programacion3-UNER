@@ -24,8 +24,10 @@ POST http://localhost:3000/api/v1/salones
 Content-Type: application/json
 
 {
-  "titulo": "Salón grande",
+  "titulo": "Salón gigante",
   "direccion": "Mitre",
+  "latitud": -34.603722,
+  "longitud": -58.381592,
   "capacidad": 100,
   "importe": 22000
 }
