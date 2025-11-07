@@ -5,12 +5,12 @@ import path from "path";
 
 export default function auditarAccion(recurso) {
   return (req, res, next) => {
-    const usuario = req.user;
+    const usuario = req.user;// se obtiene el usuario autenticado
     if (!usuario) return next();
 
-    const usuarioId = usuario.usuario_id || usuario.id || "N/A";
-    const nombreUsuario = usuario.usuario || usuario.nombre_usuario || "Desconocido";
-
+    const usuarioId = usuario.usuario_id;
+    const nombreUsuario = usuario.usuario;
+    //Captura información sobre la petición HTTP
     const metodo = req.method;
     const url = req.originalUrl;
     const ip = req.ip || (req.connection && req.connection.remoteAddress) || "IP desconocida";
@@ -45,6 +45,7 @@ export default function auditarAccion(recurso) {
     } catch (err) {
       console.error("Error escribiendo log de auditoría:", err);
     }
+  
 
     next();
   };
