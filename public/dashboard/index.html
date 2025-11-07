@@ -23,6 +23,14 @@
         gap: 30px;
         align-items: center;
       }
+
+      #clock {
+        /* font-size: 1.2rem; */
+        /* font-weight: 500; */
+        margin-inline: auto 2rem;
+        opacity: 0.5;
+        letter-spacing: 0.5px;
+      }
       a,
       a:visited {
         color: inherit;
@@ -39,7 +47,7 @@
       .card {
         display: inline-block;
         padding: 1rem 2rem;
-        margin: 1rem;
+        margin: 0.8rem;
         background: #ffffff16;
         border-radius: 8px;
       }
@@ -50,13 +58,14 @@
       }
 
       .card p {
+        width: 70px;
         margin: 0.5rem 0 0;
         font-size: 1rem;
       }
 
       footer {
-        position: fixed;
-        bottom: 10px;
+        /* position: absolute; */
+        margin-top: 3rem;
         font-size: 0.9rem;
       }
 
@@ -72,7 +81,6 @@
         height: 100%;
         border-radius: 6px;
         cursor: pointer;
-        /* margin-left: 1rem; */
       }
 
       #copy-btn:hover {
@@ -86,15 +94,26 @@
         margin-left: -10px;
         opacity: 0;
         transition: 0.3s;
-        /* color: #8f8; */
+      }
+
+      @media (width < 800px) {
+        .header {
+          flex-direction: column;
+          gap: 0px;
+        }
+        #clock {
+          margin-inline: auto;
+          margin-bottom: 1rem;
+        }
       }
     </style>
   </head>
   <body>
     <div class="header">
       <h1>Dashboard</h1>
-      <button id="copy-btn" title="Copiar al portapapeles">Copiar</button>
+      <button id="copy-btn" title="Copiar al portapapeles">Copiar estadísticas</button>
       <span id="bopy-msg">✓ Copiado al portapapeles</span>
+      <div id="clock"></div>
     </div>
 
     <div class="card">
@@ -129,7 +148,7 @@
     </footer>
 
     <script>
-      // cargar estadísticas al endpoint del backend
+      // cargar estadísticas desde el endpoint del backend
       fetch("/api/v1/dashboard")
         .then((res) => res.json())
         .then((data) => {
@@ -147,9 +166,30 @@
         })
         .catch((err) => console.error(err));
 
-      // url para el link de api docs
+      // url para el enlace de api docs
       const base = window.location.origin;
       document.querySelector("#docs-link").href = `${base}/api-docs`;
+
+      // función para formatear fecha y hora en `dd-mm-yyyy hh:mm:ss`
+      function formatearFecha(fecha) {
+        const pad = (n) => n.toString().padStart(2, "0");
+        const d = pad(fecha.getDate());
+        const m = pad(fecha.getMonth() + 1);
+        const y = fecha.getFullYear();
+        const h = pad(fecha.getHours());
+        const min = pad(fecha.getMinutes());
+        const s = pad(fecha.getSeconds());
+        return `${d}-${m}-${y} ${h}:${min}:${s}`;
+      }
+
+      // actualizar reloj
+      function actualizarReloj() {
+        const ahora = new Date();
+        document.querySelector("#clock").textContent = formatearFecha(ahora);
+      }
+
+      setInterval(actualizarReloj, 1000);
+      actualizarReloj();
 
       // copiar estadísticas al portapapeles
       document.querySelector("#copy-btn").addEventListener("click", () => {
@@ -161,12 +201,16 @@
           Servicios: document.querySelector("#servicios").textContent,
           Salones: document.querySelector("#salones").textContent,
         };
-        // console.dir(stats);
 
-        // preparar string
-        const text = Object.entries(stats)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join("\n");
+        const ahora = new Date();
+        const timestamp = formatearFecha(ahora);
+
+        // preparar string final
+        const text =
+          `(${timestamp})\n` +
+          Object.entries(stats)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("\n");
 
         // copiar al portapapeles
         navigator.clipboard
