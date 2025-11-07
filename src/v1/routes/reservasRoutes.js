@@ -11,10 +11,7 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import verificarToken from "../../middlewares/authJwt.js";
-import auditarAccion from "../../middlewares/auditarAccion.js";  // 
-
-
-
+import auditarAccion from "../../middlewares/auditarAccion.js"; //
 
 const cache = apicache.middleware;
 const cacheClear = (route) => apicache.clear(route);
@@ -23,7 +20,7 @@ const __dirname = path.dirname(__filename);
 
 const uploadDir = path.join(__dirname, "../../uploads/cumpleanieros");
 
-// Crear carpeta uploads/cumpleanieros si no existe
+// crear carpeta uploads/cumpleanieros si no existe
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -31,7 +28,7 @@ if (!fs.existsSync(uploadDir)) {
 const reservasController = new ReservasController();
 const router = express.Router();
 
-// Configuración de Multer para subir foto del cumpleañero
+// configuración de Multer para subir foto del cumpleañero
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -289,7 +286,7 @@ router.post(
   verificarToken,
   autorizarUsuarios([1, 3]),
   upload.single("foto_cumpleaniero"),
-  auditarAccion("Crear Reserva"), 
+  auditarAccion("Crear Reserva"),
   [
     check("fecha_reserva", "La fecha es necesaria.").notEmpty(),
     check("salon_id", "El salón es necesario.").notEmpty(),
@@ -326,9 +323,15 @@ router.put(
   }
 );
 
-router.delete("/:id", verificarToken, autorizarUsuarios([1]),auditarAccion("Eliminar Reserva"), async (req, res, next) => {
-  await reservasController.eliminar(req, res, next);
-  cacheClear("/api/v1/reservas");
-});
+router.delete(
+  "/:id",
+  verificarToken,
+  autorizarUsuarios([1]),
+  auditarAccion("Eliminar Reserva"),
+  async (req, res, next) => {
+    await reservasController.eliminar(req, res, next);
+    cacheClear("/api/v1/reservas");
+  }
+);
 
 export default router;

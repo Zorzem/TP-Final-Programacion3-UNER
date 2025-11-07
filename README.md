@@ -38,6 +38,7 @@ src
 │   └── usuariosController.js
 ├── db                        # acceso a la BD, consultas y modelos
 │   ├── conexion.js           # conexión a la BD
+│   ├── dashboard.js
 │   ├── encuestas.js
 │   ├── reportes.js
 │   ├── reservas.js
@@ -46,6 +47,8 @@ src
 │   ├── turnos.js
 │   └── usuarios.js
 ├── middlewares               # funciones intermedias que se ejecutan antes de los controladores
+│   ├── auditarAccion.js      # registro de las operaciones en la API
+│   ├── authJwt.js            # autenticación JWT
 │   ├── autorizarUsuarios.js  # control de permisos y roles
 │   └── validarCampos.js      # validación de datos entrantes
 ├── services                  # lógica de negocio y reglas de la aplicación
@@ -78,7 +81,8 @@ src
 ├── sql/                      # esquema de la BD y procedimientos almacenados
 ├── test/                     # archivos para testear solicitudes HTTP
 ├── public/dashboard/         # frontend del dashboard de estadísticas
-└── main.js                   # punto de entrada de la app
+└── reservas.js               # configura la app
+└── servidor.js               # arranca el server
 ```
 
 ## Instalación
@@ -175,8 +179,8 @@ http://localhost:3000/api-docs/
 - Dashboard simple de estadísticas globales (no requiere autenticación):
   http://localhost:3000/dashboard
 
-- Carpeta `/logs` con archivo `auditoria.log` donde se resguarda el historial de las acciones basicas.
-(si no existe se crea al momento de guardar información)
+- Carpeta `/logs` con archivo `auditoria.log` donde se resguarda el historial de
+  las acciones basicas. (si no existe se crea al momento de guardar información)
 
 ---
 
