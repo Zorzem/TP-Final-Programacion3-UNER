@@ -7,6 +7,8 @@ import { validarCampos } from "../../middlewares/validarCampos.js";
 import SalonesController from "../../controllers/salonesController.js";
 import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
 import verificarToken from '../../middlewares/authJwt.js';
+import auditarAccion from "../../middlewares/auditarAccion.js";  // 
+
 
 const salonesController = new SalonesController();
 const router = express.Router();
@@ -231,7 +233,7 @@ let cache = apicache.middleware;
 router.get("/", verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), salonesController.buscarTodos);
 router.get("/:id",verificarToken, autorizarUsuarios([1,2,3]), salonesController.buscarPorId);
 
-router.post("/",verificarToken, autorizarUsuarios([1,2]), 
+router.post("/",verificarToken, autorizarUsuarios([1,2]), auditarAccion("Crear Salón"),
     [
         check("titulo", "El título es obligatorio.").notEmpty(),
         check("direccion", "La dirección es obligatoria.").notEmpty(),
@@ -246,7 +248,7 @@ router.post("/",verificarToken, autorizarUsuarios([1,2]),
         cacheClear('/api/v1/salones');
     });
 
-router.put("/:id",verificarToken, autorizarUsuarios([1,2]), 
+router.put("/:id",verificarToken, autorizarUsuarios([1,2]),auditarAccion("Modificar Salón"), 
     [
         check("titulo").optional().notEmpty().withMessage("El título no puede estar vacío."),
         check("direccion").optional().notEmpty().withMessage("La dirección no puede estar vacía."),
@@ -261,7 +263,7 @@ router.put("/:id",verificarToken, autorizarUsuarios([1,2]),
         cacheClear('/api/v1/salones');
     });
     
-router.delete("/:id", verificarToken, autorizarUsuarios([1,2]), 
+router.delete("/:id", verificarToken, autorizarUsuarios([1,2]), auditarAccion("Eliminar Salón"),
     async (req, res, next) => {
         await salonesController.eliminar(req, res, next);
         cacheClear('/api/v1/salones');

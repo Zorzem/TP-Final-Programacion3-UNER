@@ -11,6 +11,8 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import verificarToken from "../../middlewares/authJwt.js";
+import auditarAccion from "../../middlewares/auditarAccion.js";  // 
+
 
 
 
@@ -287,6 +289,7 @@ router.post(
   verificarToken,
   autorizarUsuarios([1, 3]),
   upload.single("foto_cumpleaniero"),
+  auditarAccion("Crear Reserva"), 
   [
     check("fecha_reserva", "La fecha es necesaria.").notEmpty(),
     check("salon_id", "El salón es necesario.").notEmpty(),
@@ -307,6 +310,7 @@ router.put(
   verificarToken,
   autorizarUsuarios([1]),
   upload.single("foto_cumpleaniero"),
+  auditarAccion("Editar Reserva"),
   [
     check("fecha_reserva", "La fecha es necesaria.").optional().notEmpty(),
     check("salon_id", "El salón es necesario.").optional().notEmpty(),
@@ -322,7 +326,7 @@ router.put(
   }
 );
 
-router.delete("/:id", verificarToken, autorizarUsuarios([1]), async (req, res, next) => {
+router.delete("/:id", verificarToken, autorizarUsuarios([1]),auditarAccion("Eliminar Reserva"), async (req, res, next) => {
   await reservasController.eliminar(req, res, next);
   cacheClear("/api/v1/reservas");
 });

@@ -175,6 +175,9 @@ http://localhost:3000/api-docs/
 - Dashboard simple de estadísticas globales (no requiere autenticación):
   http://localhost:3000/dashboard
 
+- Carpeta /logs con archivo "auditoria.log" donde se resguarda el historial de las acciones basicas.
+(Si no existe se crea al momento de guardar información)
+
 ---
 
 **Facultad de Ciencias de la Administración - UNER | 2025**

@@ -7,7 +7,7 @@ import { validarCampos } from "../../middlewares/validarCampos.js";
 import ServiciosController from "../../controllers/serviciosController.js";
 import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
 import verificarToken from '../../middlewares/authJwt.js';
-
+import auditarAccion from "../../middlewares/auditarAccion.js";  
 
 const serviciosController = new ServiciosController();
 const router = express.Router();
@@ -195,7 +195,7 @@ router.get("/",verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), s
 router.get("/:id",verificarToken, autorizarUsuarios([1,2,3]), serviciosController.buscarPorId);
 
 
-router.post("/",verificarToken, autorizarUsuarios([1,2]), 
+router.post("/",verificarToken, autorizarUsuarios([1,2]),auditarAccion("Crear Servicio"), 
     [
         check("descripcion", "La descripción es obligatoria.").notEmpty(),
         check("importe", "El importe es obligatorio y debe ser numérico.").notEmpty().isFloat(),
@@ -206,7 +206,7 @@ router.post("/",verificarToken, autorizarUsuarios([1,2]),
         cacheClear('/api/v1/servicios');
     });
 
-router.put("/:id",verificarToken, autorizarUsuarios([1,2]), 
+router.put("/:id",verificarToken, autorizarUsuarios([1,2]), auditarAccion("Editar Servicio"), 
     [
         check("descripcion").optional().notEmpty().withMessage("La descripción no puede estar vacía."),
         check("importe").optional().isFloat().withMessage("El importe debe ser numérico."),
@@ -219,7 +219,7 @@ router.put("/:id",verificarToken, autorizarUsuarios([1,2]),
     });
 
     
-router.delete("/:id",verificarToken, autorizarUsuarios([1,2]), 
+router.delete("/:id",verificarToken, autorizarUsuarios([1,2]),auditarAccion("Borrar Servicio"),  
 async (req, res, next) => {
     await serviciosController.eliminar(req, res, next);
     cacheClear('/api/v1/servicios'); 
