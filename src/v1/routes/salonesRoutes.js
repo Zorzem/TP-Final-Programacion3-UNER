@@ -1,14 +1,13 @@
 // src/v1/routes/salonesRoutes.js
 
 import express from "express";
-import apicache from 'apicache';
+import apicache from "apicache";
 import { check } from "express-validator";
 import { validarCampos } from "../../middlewares/validarCampos.js";
 import SalonesController from "../../controllers/salonesController.js";
-import autorizarUsuarios from '../../middlewares/autorizarUsuarios.js';
-import verificarToken from '../../middlewares/authJwt.js';
-import auditarAccion from "../../middlewares/auditarAccion.js";  // 
-
+import autorizarUsuarios from "../../middlewares/autorizarUsuarios.js";
+import verificarToken from "../../middlewares/authJwt.js";
+import auditarAccion from "../../middlewares/auditarAccion.js"; //
 
 const salonesController = new SalonesController();
 const router = express.Router();
@@ -229,45 +228,61 @@ let cache = apicache.middleware;
  *         description: Salón no encontrado
  */
 
+router.get("/", verificarToken, autorizarUsuarios([1, 2, 3]), cache("5 minutes"), salonesController.buscarTodos);
+router.get("/:id", verificarToken, autorizarUsuarios([1, 2, 3]), salonesController.buscarPorId);
 
-router.get("/", verificarToken, autorizarUsuarios([1,2,3]), cache('5 minutes'), salonesController.buscarTodos);
-router.get("/:id",verificarToken, autorizarUsuarios([1,2,3]), salonesController.buscarPorId);
+router.post(
+  "/",
+  verificarToken,
+  autorizarUsuarios([1, 2]),
+  auditarAccion("Crear Salón"),
+  [
+    check("titulo", "El título es obligatorio.").notEmpty(),
+    check("direccion", "La dirección es obligatoria.").notEmpty(),
+    check("latitud", "La latitud es obligatoria y debe ser un número.").notEmpty().isFloat(),
+    check("longitud", "La longitud es obligatoria y debe ser un número.").notEmpty().isFloat(),
+    check("capacidad", "La capacidad es obligatoria y debe ser un entero positivo.").notEmpty().isInt({ min: 1 }),
+    check("importe", "El importe es obligatorio y debe ser numérico.").notEmpty().isFloat(),
+    validarCampos,
+  ],
+  async (req, res, next) => {
+    await salonesController.crear(req, res, next);
+    // cacheClear("/api/v1/salones");
+    apicache.clear("/api/v1/salones");
+  }
+);
 
-router.post("/",verificarToken, autorizarUsuarios([1,2]), auditarAccion("Crear Salón"),
-    [
-        check("titulo", "El título es obligatorio.").notEmpty(),
-        check("direccion", "La dirección es obligatoria.").notEmpty(),
-        check("latitud", "La latitud es obligatoria y debe ser un número.").notEmpty().isFloat(),
-        check("longitud", "La longitud es obligatoria y debe ser un número.").notEmpty().isFloat(),
-        check("capacidad", "La capacidad es obligatoria y debe ser un entero positivo.").notEmpty().isInt({ min: 1 }),
-        check("importe", "El importe es obligatorio y debe ser numérico.").notEmpty().isFloat(),
-        validarCampos,
-    ],
-    async (req, res, next) => {
-        await salonesController.crear(req, res, next);
-        cacheClear('/api/v1/salones');
-    });
+router.put(
+  "/:id",
+  verificarToken,
+  autorizarUsuarios([1, 2]),
+  auditarAccion("Modificar Salón"),
+  [
+    check("titulo").optional().notEmpty().withMessage("El título no puede estar vacío."),
+    check("direccion").optional().notEmpty().withMessage("La dirección no puede estar vacía."),
+    check("latitud").optional().isFloat().withMessage("La latitud debe ser un número."),
+    check("longitud").optional().isFloat().withMessage("La longitud debe ser un número."),
+    check("capacidad").optional().isInt({ min: 1 }).withMessage("La capacidad debe ser un entero positivo."),
+    check("importe").optional().isFloat().withMessage("El importe debe ser numérico."),
+    validarCampos,
+  ],
+  async (req, res, next) => {
+    await salonesController.editar(req, res, next);
+    // cacheClear("/api/v1/salones");
+    apicache.clear("/api/v1/salones");
+  }
+);
 
-router.put("/:id",verificarToken, autorizarUsuarios([1,2]),auditarAccion("Modificar Salón"), 
-    [
-        check("titulo").optional().notEmpty().withMessage("El título no puede estar vacío."),
-        check("direccion").optional().notEmpty().withMessage("La dirección no puede estar vacía."),
-        check("latitud").optional().isFloat().withMessage("La latitud debe ser un número."),
-        check("longitud").optional().isFloat().withMessage("La longitud debe ser un número."),
-        check("capacidad").optional().isInt({ min: 1 }).withMessage("La capacidad debe ser un entero positivo."),
-        check("importe").optional().isFloat().withMessage("El importe debe ser numérico."),
-        validarCampos,
-    ],
-    async (req, res, next) => {
-        await salonesController.editar(req, res, next);
-        cacheClear('/api/v1/salones');
-    });
-    
-router.delete("/:id", verificarToken, autorizarUsuarios([1,2]), auditarAccion("Eliminar Salón"),
-    async (req, res, next) => {
-        await salonesController.eliminar(req, res, next);
-        cacheClear('/api/v1/salones');
-    });
-
+router.delete(
+  "/:id",
+  verificarToken,
+  autorizarUsuarios([1, 2]),
+  auditarAccion("Eliminar Salón"),
+  async (req, res, next) => {
+    await salonesController.eliminar(req, res, next);
+    // cacheClear("/api/v1/salones");
+    apicache.clear("/api/v1/salones");
+  }
+);
 
 export default router;
