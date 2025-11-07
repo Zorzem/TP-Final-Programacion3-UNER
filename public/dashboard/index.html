@@ -2,19 +2,38 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Dashboard</title>
+    <title>Reservas | Dashboard</title>
     <style>
+      html {
+        color-scheme: dark;
+        /* background-color: rgb(32, 32, 32); */
+        /* color: rgb(235, 235, 235)smoke; */
+      }
+
       body {
-        font-family: sans-serif;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         margin: 2rem;
       }
+      a,
+      a:visited {
+        color: inherit;
+        display: inline-block;
+        margin-top: 10px;
+        opacity: 0.4;
+      }
+
+      a:hover {
+        opacity: 1;
+      }
+
       .card {
         display: inline-block;
         padding: 1rem 2rem;
         margin: 1rem;
-        background: #f0f0f0;
+        background: #ffffff16;
         border-radius: 8px;
       }
+
       .card h2 {
         margin: 0;
         font-size: 2rem;
@@ -22,7 +41,19 @@
       .card p {
         margin: 0.5rem 0 0;
         font-size: 1rem;
-        color: #555;
+        /* color: white; */
+      }
+
+      footer {
+        /* display: flex; */
+        /* flex-direction: column; */
+        position: fixed;
+        bottom: 10px;
+        font-size: 0.9rem;
+      }
+
+      footer p {
+        opacity: 0.4;
       }
     </style>
   </head>
@@ -54,6 +85,12 @@
       <p>Salones</p>
     </div>
 
+    <footer>
+      <a id="docs-link" href="">Ver documentación de la API</a> <br />
+      <a href="https://github.com/Zorzem/TP-Final-Programacion3-UNER">Ver repositorio del proyecto</a>
+      <p>Facultad de Ciencias de la Administración | UNER | 2025</p>
+    </footer>
+
     <script>
       fetch("/api/v1/dashboard")
         .then((res) => res.json())
@@ -71,6 +108,10 @@
           }
         })
         .catch((err) => console.error(err));
+
+      // url de api docs
+      const base = window.location.origin;
+      document.getElementById("docs-link").href = `${base}/api-docs`;
     </script>
   </body>
 </html>
