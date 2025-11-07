@@ -6,6 +6,7 @@ import { validarCampos } from "../../middlewares/validarCampos.js";
 import UsuariosController from "../../controllers/usuariosController.js";
 import autorizarUsuarios from "../../middlewares/autorizarUsuarios.js";
 import verificarToken from "../../middlewares/authJwt.js";
+import auditarAccion from "../../middlewares/auditarAccion.js";  
 
 const router = express.Router();
 const usuariosController = new UsuariosController();
@@ -200,6 +201,7 @@ router.post(
   "/",
   verificarToken,
   autorizarUsuarios([1]),
+  auditarAccion("Crear Usuario"),
   [
     check("nombre", "El nombre es obligatorio.").notEmpty(),
     check("apellido", "El apellido es obligatorio.").notEmpty(),
@@ -219,6 +221,7 @@ router.put(
   "/:id",
   verificarToken,
   autorizarUsuarios([1]),
+  auditarAccion("Editar Usuario"),
   [
     check("nombre").optional().notEmpty().withMessage("El nombre no puede estar vacío."),
     check("apellido").optional().notEmpty().withMessage("El apellido no puede estar vacío."),
@@ -234,7 +237,7 @@ router.put(
   }
 );
 
-router.delete("/:id", verificarToken, autorizarUsuarios([1]), async (req, res, next) => {
+router.delete("/:id", verificarToken, autorizarUsuarios([1]),auditarAccion("Eliminar Usuario"), async (req, res, next) => {
   await usuariosController.eliminar(req, res, next);
   apicache.clear("/api/v1/usuarios");
 });

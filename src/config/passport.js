@@ -12,23 +12,23 @@ const estrategia = new LocalStrategy(
   },
   async (nombre_usuario, contrasenia, done) => {
     try {
-      console.log("--- CONFIG -  AUTORIZACION TESTIGO DE ESTRATEGIA LOCAL - VALIDACION DE DATOS CONFIG---");
-      console.log("Nombre de usuario recibido:", nombre_usuario);
-      console.log("Contraseña recibida:", contrasenia);
+      //console.log("--- CONFIG -  AUTORIZACION TESTIGO DE ESTRATEGIA LOCAL - VALIDACION DE DATOS CONFIG---");
+      //console.log("Nombre de usuario recibido:", nombre_usuario);
+      //console.log("Contraseña recibida:", contrasenia);
 
       const usuariosServicio = new UsuariosService();
 
       const usuario = await usuariosServicio.buscar(nombre_usuario, contrasenia);
-      console.log("USUARIO:", usuario);
+      //console.log("USUARIO:", usuario);
 
       // para ver si devuelve usuario
-      console.log("config - Usuario encontrado en DB:", usuario);
+      //console.log("config - Usuario encontrado en DB:", usuario);
 
       if (!usuario) {
-        console.log("Login incorrecto -> no se encontró usuario o contraseña no coincide");
+      //  console.log("Login incorrecto -> no se encontró usuario o contraseña no coincide");
         return done(null, false, { mensaje: "Login incorrecto!" });
       }
-      console.log("Login correcto -> usuario autenticado");
+      //console.log("Login correcto -> usuario autenticado");
       return done(null, usuario, { mensaje: "Login correcto!" });
     } catch (exc) {
       console.error("Error en LocalStrategy:", exc);
