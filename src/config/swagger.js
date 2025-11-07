@@ -1,5 +1,4 @@
 // src/config/swagger.js
-
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
@@ -17,8 +16,22 @@ const options = {
         description: "Servidor local",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
-  apis: ["./src/v1/routes/*.js"], // acá van las rutas
+  apis: ["./src/v1/routes/*.js"], // rutas con anotaciones Swagger
 };
 
 const swaggerSpec = swaggerJSDoc(options);
